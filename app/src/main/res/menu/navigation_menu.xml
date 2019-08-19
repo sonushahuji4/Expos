@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/navi_bills"
+            android:title="Bills"
+            android:icon="@drawable/coins-stacks-and-banknotes"/>
+
+        <item
+            android:id="@+id/navi_events"
+            android:title="Events"
+            android:icon="@drawable/calendar"/>
+
+        <item
+            android:id="@+id/navi_summary"
+            android:title="Summary"
+            android:icon="@drawable/bar-chart"/>
+
+        <item
+            android:id="@+id/navi_reports"
+            android:title="Reports"
+            android:icon="@drawable/invoice"/>
+    </group>
+
+    <item android:title="Settings">
+        <menu>
+            <item
+                android:id="@+id/navi_logout"
+                android:title="Logout"
+                android:icon="@drawable/logout"/>
+
+            <item
+                android:id="@+id/navi_help"
+                android:title="Help"
+                android:icon="@drawable/information"/>
+        </menu>
+    </item>
+
+</menu>

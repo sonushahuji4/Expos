@@ -21,7 +21,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.widget.Toast;
 
-// imports from line 10-18 are for Navigation Drawer, dlt it if doesn't work
 
 public class Homeactivity extends AppCompatActivity {
     Button btnlogout;
@@ -41,45 +40,20 @@ public class Homeactivity extends AppCompatActivity {
         frameLayout = findViewById(R.id.framelayout);
         textView = findViewById(R.id.textview);
 
-        //btnlogout.setOnClickListener(new View.OnClickListener() {
-        //    @Override
-        //    public void onClick(View view) {
-        //        FirebaseAuth.getInstance().signOut();
-        //        Intent inToMain = new Intent(Homeactivity.this, MainActivity.class);
-        //        startActivity(inToMain);
-        //    }
-        //});
+        btnlogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseAuth.getInstance().signOut();
+                Intent inToMain = new Intent(Homeactivity.this, MainActivity.class);
+                startActivity(inToMain);
+            }
+        });
 
         textView.setText("Receipts");
         frameLayout.setBackgroundResource(R.color.colorPrimaryDark);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(naviCustomListView);
     }
-
-    private BottomNavigationView.OnNavigationItemSelectedListener naviCustomListView = new BottomNavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-            switch (menuItem.getItemId()) {
-                case R.id.bill:
-                    textView.setText("Bills");
-                    frameLayout.setBackgroundResource(R.color.colorAccent);
-                    break;
-                case R.id.reports:
-                    textView.setText("Reports");
-                    frameLayout.setBackgroundResource(R.color.colorPrimaryDark);
-                    break;
-                case R.id.summary:
-                    textView.setText("Summary");
-                    frameLayout.setBackgroundResource(R.color.colorAccent);
-                    break;
-                case R.id.events:
-                    textView.setText("Events");
-                    frameLayout.setBackgroundResource(R.color.colorPrimaryDark);
-                    break;
-            }
-            return true;
-        }
-    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -111,5 +85,32 @@ public class Homeactivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener naviCustomListView = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
+                case R.id.bill:
+                    textView.setText("Bills");
+                    frameLayout.setBackgroundResource(R.color.colorAccent);
+                    break;
+                case R.id.reports:
+                    textView.setText("Reports");
+                    frameLayout.setBackgroundResource(R.color.colorPrimaryDark);
+                    break;
+                case R.id.summary:
+                    textView.setText("Summary");
+                    frameLayout.setBackgroundResource(R.color.colorAccent);
+                    break;
+                case R.id.events:
+                    textView.setText("Events");
+                    frameLayout.setBackgroundResource(R.color.colorPrimaryDark);
+                    break;
+            }
+            return true;
+        }
+    };
+
+
 }
 

@@ -12,7 +12,6 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -21,6 +20,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.widget.Toast;
 
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 
 public class Homeactivity extends AppCompatActivity {
     Button btnlogout;
@@ -29,6 +30,9 @@ public class Homeactivity extends AppCompatActivity {
     TextView textView;
     FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+
+    FloatingActionMenu floatingActionMenu;
+    FloatingActionButton newbill, camera, image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +43,12 @@ public class Homeactivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottom_nav);
         frameLayout = findViewById(R.id.framelayout);
         textView = findViewById(R.id.textview);
+
+        // floating action buttons
+        floatingActionMenu = findViewById(R.id.floating_action_menu);
+        newbill = findViewById(R.id.Bill);
+        camera = findViewById(R.id.camera);
+        image = findViewById(R.id.clip);
 
         btnlogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,6 +63,25 @@ public class Homeactivity extends AppCompatActivity {
         frameLayout.setBackgroundResource(R.color.colorPrimaryDark);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(naviCustomListView);
+
+        newbill.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Add new Bill", Toast.LENGTH_SHORT).show();
+            }
+        });
+        camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(),"click new bill", Toast.LENGTH_SHORT).show();
+            }
+        });
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Open Gallery", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

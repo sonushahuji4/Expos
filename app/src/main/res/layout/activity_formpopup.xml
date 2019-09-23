@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/pop_bg"
+    tools:context=".formpopup">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/formtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:fontFamily="sans-serif-black"
+            android:text="New Bill"
+            android:textAppearance="@style/AppTheme.popupform"
+            android:visibility="visible" />
+
+        <EditText
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/vendor"
+            android:hint="Vendor Name"
+            android:inputType="text"
+            app:layout_constraintBottom_toTopOf="@+id/formtitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>

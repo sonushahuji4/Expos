@@ -3,6 +3,7 @@ package com.example.shadrak.expensestracker;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,10 +40,10 @@ public class Homeactivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homeactivity);
 
-        btnlogout = findViewById(R.id.button5);
+        //btnlogout = findViewById(R.id.button5);
         bottomNavigationView = findViewById(R.id.bottom_nav);
         frameLayout = findViewById(R.id.framelayout);
-        textView = findViewById(R.id.textview);
+        //textView = findViewById(R.id.textview);
 
         // floating action buttons
         floatingActionMenu = findViewById(R.id.floating_action_menu);
@@ -50,16 +51,16 @@ public class Homeactivity extends AppCompatActivity {
         camera = findViewById(R.id.camera);
         image = findViewById(R.id.clip);
 
-        btnlogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
-                Intent inToMain = new Intent(Homeactivity.this, MainActivity.class);
-                startActivity(inToMain);
-            }
-        });
+//        btnlogout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                FirebaseAuth.getInstance().signOut();
+//                Intent inToMain = new Intent(Homeactivity.this, MainActivity.class);
+//                startActivity(inToMain);
+//            }
+//        });
 
-        textView.setText("Receipts");
+        //textView.setText("Receipts");
         frameLayout.setBackgroundResource(R.color.colorPrimaryDark);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(naviCustomListView);
@@ -68,6 +69,9 @@ public class Homeactivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "Add new Bill", Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(getApplicationContext(), formpopup.class);
+                startActivity(i);
+                Log.e("Error1","popup");
             }
         });
         camera.setOnClickListener(new View.OnClickListener() {

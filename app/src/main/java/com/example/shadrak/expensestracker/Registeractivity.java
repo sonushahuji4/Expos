@@ -14,6 +14,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 
 public class Registeractivity extends AppCompatActivity {
     EditText name, emailid, passwd, confirmpasswd;
@@ -34,9 +38,9 @@ public class Registeractivity extends AppCompatActivity {
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String fname = name.getText().toString();
-                String email = emailid.getText().toString();
-                String pwd = passwd.getText().toString();
+                final String fname = name.getText().toString();
+                final String email = emailid.getText().toString();
+                final String pwd = passwd.getText().toString();
                 String cpwd = confirmpasswd.getText().toString();
                 if(fname.isEmpty() && email.isEmpty() && pwd.isEmpty() && cpwd.isEmpty()) {
                     Toast.makeText(Registeractivity.this,"Fields are Empty!!",Toast.LENGTH_SHORT).show();
@@ -67,10 +71,23 @@ public class Registeractivity extends AppCompatActivity {
                             if(!task.isSuccessful()) {
                                 Toast.makeText(Registeractivity.this,"SignUp Unsuccessfull!!",Toast.LENGTH_SHORT).show();
                             } else {
+                                DatabaseReference mDatabase;
+                                mDatabase = FirebaseDatabase.getInstance().getReference();
+
                                 Toast.makeText(Registeractivity.this,"SignUp Successfull!!",Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(Registeractivity.this, Homeactivity.class));
+                                Intent i = new Intent(Registeractivity.this, Homeactivity.class);
+                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                String uid = user.getUid();
+
+                                User usr = new User(uid, fname, email);
+                                mDatabase.child("users").child(uid).setValue(usr);
+
+
+                                i.putExtra("uid",uid); // Passing data between activities
+                                startActivity(i);
                             }
                         }
+
                     });
                 }
                 else {
@@ -79,4 +96,6 @@ public class Registeractivity extends AppCompatActivity {
             }
         });
     }
+
+
 }

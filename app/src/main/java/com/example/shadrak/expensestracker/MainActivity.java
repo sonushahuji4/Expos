@@ -16,6 +16,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
     EditText emailid, password;
@@ -34,19 +36,20 @@ public class MainActivity extends AppCompatActivity {
         login = findViewById(R.id.button2);
         register = findViewById(R.id.button3);
 
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser mFirebaseUser = mFirebaseAuth.getCurrentUser();
-                if(mFirebaseUser != null) {
-                    Toast.makeText(MainActivity.this,"LogIn Successfull!!",Toast.LENGTH_SHORT).show();
-                    Intent i = new Intent(MainActivity.this, Homeactivity.class);
-                    startActivity(i);
-                } else {
-                    Toast.makeText(MainActivity.this,"Please Login!!",Toast.LENGTH_SHORT).show();
-                }
-            }
-        };
+//        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+//            @Override
+//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+//                FirebaseUser mFirebaseUser = mFirebaseAuth.getCurrentUser();
+//                if(mFirebaseUser != null) {
+//                    Log.d("user", String.valueOf(mFirebaseUser));
+//                    Toast.makeText(MainActivity.this,"LogIn Successfull",Toast.LENGTH_SHORT).show();
+//                    Intent i = new Intent(MainActivity.this, Homeactivity.class);
+//                    startActivity(i);
+//                } else {
+//                    Toast.makeText(MainActivity.this,"Please Login!!",Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        };
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,7 +73,11 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(MainActivity.this,"Login Error, Please Login again!!",Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(MainActivity.this,"Login Successfull!!",Toast.LENGTH_SHORT).show();
+                                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
                                 Intent inToHome = new Intent(MainActivity.this, Homeactivity.class);
+                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                String uid = user.getUid();
+                                inToHome.putExtra("uid",uid);
                                 startActivity(inToHome);
                             }
                         }
@@ -88,9 +95,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
-    }
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+//    }
 }

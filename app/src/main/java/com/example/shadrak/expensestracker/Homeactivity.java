@@ -1,6 +1,9 @@
 package com.example.shadrak.expensestracker;
 
 import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,71 +24,64 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.widget.Toast;
 
-import com.github.clans.fab.FloatingActionButton;
-import com.github.clans.fab.FloatingActionMenu;
+//import com.github.clans.fab.FloatingActionButton;
+//import com.github.clans.fab.FloatingActionMenu;
 
 public class Homeactivity extends AppCompatActivity {
-    Button btnlogout;
-    FrameLayout frameLayout;
-    BottomNavigationView bottomNavigationView;
-    TextView textView;
+//    Button btnlogout;
+//    FrameLayout frameLayout;
+//    BottomNavigationView bottomNavigationView;
+//    TextView textView;
+
+    TabLayout tabLayout;
+    ViewPager viewPager;
+
     FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
-    FloatingActionMenu floatingActionMenu;
-    FloatingActionButton newbill, camera, image;
+//    FloatingActionMenu floatingActionMenu;
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homeactivity);
 
+        Bundle bundle = getIntent().getExtras();
+        assert bundle != null;
+        String uid = bundle.getString("uid");
+
         //btnlogout = findViewById(R.id.button5);
-        bottomNavigationView = findViewById(R.id.bottom_nav);
-        frameLayout = findViewById(R.id.framelayout);
+//        bottomNavigationView = findViewById(R.id.bottom_nav);
+//        frameLayout = findViewById(R.id.framelayout);
         //textView = findViewById(R.id.textview);
 
-        // floating action buttons
-        floatingActionMenu = findViewById(R.id.floating_action_menu);
-        newbill = findViewById(R.id.Bill);
-        camera = findViewById(R.id.camera);
-        image = findViewById(R.id.clip);
+        tabLayout = findViewById(R.id.tablayout);
+        viewPager = findViewById(R.id.viewpager);
 
-//        btnlogout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                FirebaseAuth.getInstance().signOut();
-//                Intent inToMain = new Intent(Homeactivity.this, MainActivity.class);
-//                startActivity(inToMain);
-//            }
-//        });
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.add(new bills_fragment(), "Bills");
+        adapter.add(new camera_fragment(), "Camera");
+        adapter.add(new summary_fragment(), "Summary");
+
+        viewPager.setAdapter(adapter);
+        tabLayout.setupWithViewPager(viewPager);
 
         //textView.setText("Receipts");
-        frameLayout.setBackgroundResource(R.color.colorPrimaryDark);
+//        frameLayout.setBackgroundResource(R.color.colorPrimaryDark);
+//
+//        bottomNavigationView.setOnNavigationItemSelectedListener(naviCustomListView);
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(naviCustomListView);
+        fab = findViewById(R.id.fab);
 
-        newbill.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Add new Bill", Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(getApplicationContext(), formpopup.class);
                 startActivity(i);
-                Log.e("Error1","popup");
             }
         });
-        camera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),"click new bill", Toast.LENGTH_SHORT).show();
-            }
-        });
-        image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Open Gallery", Toast.LENGTH_SHORT).show();
-            }
-        });
+
     }
 
     @Override
@@ -99,50 +95,42 @@ public class Homeactivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.logout:
-                Button option;
-                option = findViewById(R.id.logout);
-
-                option.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        FirebaseAuth.getInstance().signOut();
-                        Intent inToMain = new Intent(Homeactivity.this, MainActivity.class);
-                        startActivity(inToMain);
-                    }
-                });
+                startActivity(new Intent(this,MainActivity.class));
                 return true;
-            case R.id.help:
-                Toast.makeText(this, "Help option selected", Toast.LENGTH_SHORT).show();
+            case R.id.profile:
+                startActivity(new Intent(this, ProfileActivity.class));
+                Toast.makeText(this, "Profile Page", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener naviCustomListView = new BottomNavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-            switch (menuItem.getItemId()) {
-                case R.id.bill:
-                    textView.setText("Bills");
-                    frameLayout.setBackgroundResource(R.color.colorAccent);
-                    break;
-                case R.id.reports:
-                    textView.setText("Reports");
-                    frameLayout.setBackgroundResource(R.color.colorPrimaryDark);
-                    break;
-                case R.id.summary:
-                    textView.setText("Summary");
-                    frameLayout.setBackgroundResource(R.color.colorAccent);
-                    break;
-                case R.id.events:
-                    textView.setText("Events");
-                    frameLayout.setBackgroundResource(R.color.colorPrimaryDark);
-                    break;
-            }
-            return true;
-        }
-    };
+//    private BottomNavigationView.OnNavigationItemSelectedListener naviCustomListView = new BottomNavigationView.OnNavigationItemSelectedListener() {
+//        @Override
+//        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+//            Log.i("nav","bottom_nav");
+//            switch (menuItem.getItemId()) {
+//                case R.id.bill:
+//                    Log.i("nav","bill");
+//                    textView.setText("Bills");
+//                    frameLayout.setBackgroundResource(R.color.colorAccent);
+//                    break;
+//                case R.id.camera:
+//                    Log.i("nav","reports");
+//                    textView.setText("Camera");
+//                    frameLayout.setBackgroundResource(R.color.colorPrimaryDark);
+//                    break;
+//                case R.id.summary:
+//                    Log.i("nav","summary");
+//                    textView.setText("Summary");
+//                    frameLayout.setBackgroundResource(R.color.colorAccent);
+//                    break;
+//
+//            }
+//            return true;
+//        }
+//    };
 
 
 }

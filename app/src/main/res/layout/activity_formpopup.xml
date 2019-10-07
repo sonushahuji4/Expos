@@ -1,37 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/pop_bg"
+    android:orientation="vertical"
+    android:gravity="center"
     tools:context=".formpopup">
 
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="false"
+        android:layout_margin="20sp"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:text="New Bill"
+        android:layout_marginTop="20dp"/>
+    
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center">
-
-        <TextView
-            android:id="@+id/formtitle"
-            android:layout_width="wrap_content"
-            android:layout_height="80dp"
-            android:fontFamily="sans-serif-black"
-            android:text="New Bill"
-            android:textAppearance="@style/AppTheme.popupform"
-            android:visibility="visible" />
+        android:padding="16dp">
+        
+        <EditText
+            android:id="@+id/vendorname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Vendor Name"
+            android:inputType="text" />
 
         <EditText
-            android:layout_width="320dp"
+            android:id="@+id/place"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/vendor"
-            android:hint="Vendor Name"
+            android:hint="Place"
             android:inputType="text"
-            app:layout_constraintBottom_toTopOf="@+id/formtitle"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/vendorname"/>
+
+        <EditText
+            android:id="@+id/amount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Total Amount"
+            android:inputType="text"
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/place"/>
+
+        <EditText
+            android:id="@+id/editdate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Choose date"
+            android:focusable="false"
+            android:inputType="none"
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/amount"/>
+
+        <Spinner
+            android:id="@+id/category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/editdate"
+            android:prompt="@string/category"
+            android:entries="@array/category_array"/>
+
+        <!-- Here pick image from gallery will come -->
+
+        <Button
+            android:id="@+id/submitbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Submit"
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/category"
+            android:layout_centerHorizontal="true"/>
+        
     </RelativeLayout>
 
-</android.support.constraint.ConstraintLayout>
+
+</LinearLayout>

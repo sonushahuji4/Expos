@@ -3,4 +3,13 @@
 
     <string name="open">Open</string>
     <string name="close">Close</string>
+    <string name="category">Category</string>
+    <string-array name="category_array">
+        <item>Food</item>
+        <item>Travels</item>
+        <item>Medicals</item>
+        <item>Shopping</item>
+        <item>Bills/Recharge</item>
+        <item>Miscellaneous</item>
+    </string-array>
 </resources>

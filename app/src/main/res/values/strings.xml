@@ -4,6 +4,8 @@
     <string name="open">Open</string>
     <string name="close">Close</string>
     <string name="category">Category</string>
+    <string name="picture">Capture</string>
+    <string name="summary">Summary</string>
     <string-array name="category_array">
         <item>Food</item>
         <item>Travels</item>

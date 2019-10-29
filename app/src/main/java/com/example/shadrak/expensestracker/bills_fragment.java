@@ -44,5 +44,17 @@ public class bills_fragment extends Fragment {
         list.add(new Bills("PVR Cinemas", "18/10/12", 1600));
         list.add(new Bills("Airtel", "05/04/16", 2000));
         list.add(new Bills("Nandini Tours & Travels", "16/07/19", 10000));
+        list.add(new Bills("BigBazar", "10/07/07", 200));
+        list.add(new Bills("Indian Oil", "23/06/07", 500));
+        list.add(new Bills("Sai Leela", "10/12/18", 1200));
+        list.add(new Bills("PVR Cinemas", "18/10/12", 1600));
+        list.add(new Bills("Airtel", "05/04/16", 2000));
+        list.add(new Bills("Nandini Tours & Travels", "16/07/19", 10000));
+        list.add(new Bills("BigBazar", "10/07/07", 200));
+        list.add(new Bills("Indian Oil", "23/06/07", 500));
+        list.add(new Bills("Sai Leela", "10/12/18", 1200));
+        list.add(new Bills("PVR Cinemas", "18/10/12", 1600));
+        list.add(new Bills("Airtel", "05/04/16", 2000));
+        list.add(new Bills("Nandini Tours & Travels", "16/07/19", 10000));
     }
 }

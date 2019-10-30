@@ -2,9 +2,9 @@ package com.example.shadrak.expensestracker;
 
 public class Bills {
 
-    private String vendor;
-    private String date;
-    private int amount;
+    public String vendor;
+    public String date;
+    public int amount;
 
     public Bills() {
 

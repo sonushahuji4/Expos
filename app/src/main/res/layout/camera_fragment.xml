@@ -10,6 +10,7 @@
     <TextureView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="6dp"
         android:id="@+id/imageview"
         android:layout_above="@+id/capture"/>
 

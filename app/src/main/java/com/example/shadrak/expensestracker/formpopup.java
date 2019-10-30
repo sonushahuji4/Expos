@@ -13,16 +13,31 @@ import android.widget.EditText;
 import android.app.DatePickerDialog;
 import android.widget.DatePicker;
 import android.widget.Spinner;
+import android.widget.Toast;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 public class formpopup extends Activity {
 
     EditText vendor, place, edit_date, amount;
     Button submit;
     DatePickerDialog.OnDateSetListener onDateSetListener;
-    String vendorname, location, costprice, Category;
+    String vendorname, location, costprice, Category, date;
     Spinner category;
+    DatabaseReference rootref, childref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +66,10 @@ public class formpopup extends Activity {
         place = findViewById(R.id.place);
         edit_date = findViewById(R.id.editdate);
         amount = findViewById(R.id.amount);
-//        category = findViewById(R.id.category);
         submit = findViewById(R.id.submitbutton);
+
+        //firebase stuff
+        rootref = FirebaseDatabase.getInstance().getReference();
 
         // Pick date function
         edit_date.setOnClickListener(new View.OnClickListener(){
@@ -78,6 +95,7 @@ public class formpopup extends Activity {
               month = month+1;
               String date = dayOfMonth + "/" + month + "/" + year;
               edit_date.setText(date);
+
           }
         };
 
@@ -91,7 +109,30 @@ public class formpopup extends Activity {
                 //Category = category.getText().toString();
                 customOnItemSelectedListener obj = new customOnItemSelectedListener();
                 Category = obj.getValue();
-                Log.d("category", "category is "+Category);
+                date = edit_date.getText().toString();
+//                Log.d("category", "category is "+Category);
+                Toast.makeText(getApplicationContext(),"category is "+Category,Toast.LENGTH_SHORT).show();
+
+                //get userid
+                MainActivity activity = new MainActivity();
+                String userid = activity.getUid();
+                Random r = new Random();
+                int billid = r.nextInt(9999 - 1000) + 1000;
+
+                //newBill data = new newBill(costprice, date, location, Category, vendorname);
+
+                //childref = rootref.child("Bills").child(userid).child(String.valueOf(billid));
+                //childref = rootref.child("Bills").child(userid);
+                childref = rootref.child("Bills");
+
+                Map<String, newBill> bills = new HashMap<>();
+                bills.put(String.valueOf(billid), new newBill(costprice, date, location, Category, vendorname));
+
+
+//                childref.push().setValue(userMap);
+
+                childref.push().setValue(bills);
+
             }
         });
 

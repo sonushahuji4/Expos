@@ -10,34 +10,23 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.Toolbar;
-import android.widget.FrameLayout;
-import android.widget.TextView;
 import android.view.MenuItem;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.widget.Toast;
 
-//import com.github.clans.fab.FloatingActionButton;
-//import com.github.clans.fab.FloatingActionMenu;
-
 public class Homeactivity extends AppCompatActivity {
-//    Button btnlogout;
-//    FrameLayout frameLayout;
-//    BottomNavigationView bottomNavigationView;
-//    TextView textView;
 
     TabLayout tabLayout;
     ViewPager viewPager;
 
-    FirebaseAuth mFirebaseAuth;
+    public String uid;
+    private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+    FirebaseDatabase ref;
+
 
 //    FloatingActionMenu floatingActionMenu;
     FloatingActionButton fab;
@@ -49,12 +38,7 @@ public class Homeactivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         assert bundle != null;
-        String uid = bundle.getString("uid");
-
-        //btnlogout = findViewById(R.id.button5);
-//        bottomNavigationView = findViewById(R.id.bottom_nav);
-//        frameLayout = findViewById(R.id.framelayout);
-        //textView = findViewById(R.id.textview);
+        uid = bundle.getString("uid");
 
         tabLayout = findViewById(R.id.tablayout);
         viewPager = findViewById(R.id.viewpager);
@@ -67,10 +51,7 @@ public class Homeactivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
 
-        //textView.setText("Receipts");
-//        frameLayout.setBackgroundResource(R.color.colorPrimaryDark);
-//
-//        bottomNavigationView.setOnNavigationItemSelectedListener(naviCustomListView);
+        mAuth = FirebaseAuth.getInstance();
 
         fab = findViewById(R.id.fab);
 
@@ -95,10 +76,14 @@ public class Homeactivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.logout:
+                FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(this,MainActivity.class));
+                finish();
                 return true;
             case R.id.profile:
-                startActivity(new Intent(this, ProfileActivity.class));
+                Intent i = new Intent(this, ProfileActivity.class);
+                i.putExtra("uid",uid);
+                startActivity(i);
                 Toast.makeText(this, "Profile Page", Toast.LENGTH_SHORT).show();
                 return true;
             default:
@@ -106,31 +91,6 @@ public class Homeactivity extends AppCompatActivity {
         }
     }
 
-//    private BottomNavigationView.OnNavigationItemSelectedListener naviCustomListView = new BottomNavigationView.OnNavigationItemSelectedListener() {
-//        @Override
-//        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-//            Log.i("nav","bottom_nav");
-//            switch (menuItem.getItemId()) {
-//                case R.id.bill:
-//                    Log.i("nav","bill");
-//                    textView.setText("Bills");
-//                    frameLayout.setBackgroundResource(R.color.colorAccent);
-//                    break;
-//                case R.id.camera:
-//                    Log.i("nav","reports");
-//                    textView.setText("Camera");
-//                    frameLayout.setBackgroundResource(R.color.colorPrimaryDark);
-//                    break;
-//                case R.id.summary:
-//                    Log.i("nav","summary");
-//                    textView.setText("Summary");
-//                    frameLayout.setBackgroundResource(R.color.colorAccent);
-//                    break;
-//
-//            }
-//            return true;
-//        }
-//    };
 
 
 }

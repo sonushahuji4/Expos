@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     Button login, register;
     FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private String uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,20 +37,20 @@ public class MainActivity extends AppCompatActivity {
         login = findViewById(R.id.button2);
         register = findViewById(R.id.button3);
 
-//        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-//            @Override
-//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-//                FirebaseUser mFirebaseUser = mFirebaseAuth.getCurrentUser();
-//                if(mFirebaseUser != null) {
-//                    Log.d("user", String.valueOf(mFirebaseUser));
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser mFirebaseUser = mFirebaseAuth.getCurrentUser();
+                if(mFirebaseUser != null) {
+                    Log.d("user", String.valueOf(mFirebaseUser));
 //                    Toast.makeText(MainActivity.this,"LogIn Successfull",Toast.LENGTH_SHORT).show();
 //                    Intent i = new Intent(MainActivity.this, Homeactivity.class);
 //                    startActivity(i);
-//                } else {
-//                    Toast.makeText(MainActivity.this,"Please Login!!",Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        };
+                } else {
+                    Toast.makeText(MainActivity.this,"Please Login!!",Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
                                 DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
                                 Intent inToHome = new Intent(MainActivity.this, Homeactivity.class);
                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                                String uid = user.getUid();
+                                uid = user.getUid();
                                 inToHome.putExtra("uid",uid);
                                 startActivity(inToHome);
                             }
@@ -95,9 +96,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
-//    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+    }
+
+    public String getUid(){
+        return uid;
+    }
 }

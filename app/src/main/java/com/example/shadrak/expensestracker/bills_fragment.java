@@ -38,6 +38,7 @@ public class bills_fragment extends Fragment {
     private void linearlist() {
 
         list = new ArrayList<Bills>();
+        list.add(new Bills("Hanumant","09/08/19",811));
         list.add(new Bills("BigBazar", "10/07/07", 200));
         list.add(new Bills("Indian Oil", "23/06/07", 500));
         list.add(new Bills("Sai Leela", "10/12/18", 1200));

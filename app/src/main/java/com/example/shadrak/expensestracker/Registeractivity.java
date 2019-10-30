@@ -77,14 +77,18 @@ public class Registeractivity extends AppCompatActivity {
                                 Toast.makeText(Registeractivity.this,"SignUp Successfull!!",Toast.LENGTH_SHORT).show();
                                 Intent i = new Intent(Registeractivity.this, Homeactivity.class);
                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
                                 String uid = user.getUid();
+                                if(uid == null)
+                                    Toast.makeText(getApplicationContext(), "Some Error occured!!",Toast.LENGTH_SHORT).show();
+                                else {
+                                    User usr = new User(uid, fname, email);
+                                    mDatabase.child("users").child(uid).setValue(usr);
 
-                                User usr = new User(uid, fname, email);
-                                mDatabase.child("users").child(uid).setValue(usr);
 
-
-                                i.putExtra("uid",uid); // Passing data between activities
-                                startActivity(i);
+                                    i.putExtra("uid", uid); // Passing data between activities
+                                    startActivity(i);
+                                }
                             }
                         }
 

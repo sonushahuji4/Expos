@@ -16,42 +16,15 @@
         app:tabIndicatorColor="@android:color/holo_blue_dark"
         app:tabTextColor="#e7e757"
         app:tabSelectedTextColor="@android:color/white"
-        android:background="#808000"/>
+        android:background="@color/colorPrimary"/>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/tablayout"/>
 
-<!--    <FrameLayout-->
-<!--        android:id="@+id/framelayout"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:layout_alignParentStart="true"-->
-<!--        android:layout_alignParentLeft="true"-->
-<!--        android:layout_alignParentTop="true"> -->
-<!--        android:layout_above="@+id/bottom_nav"-->
 
-        <!--<fragment-->
-            <!--android:id="@+id/fragment"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:name="com.example.shadrak.expensestracker.bills_fragment">-->
-
-            <!--<android.support.v7.widget.RecyclerView-->
-                <!--android:id="@+id/rcv_bills"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"/>-->
-
-        <!--</fragment>-->
-
-        <!--<fragment-->
-            <!--android:id="@+id/fragment_camera"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:name="com.example.shadrak.expensestracker.camera_fragment"/>-->
-
-<!--    </FrameLayout>-->
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
@@ -65,20 +38,7 @@
         android:layout_marginEnd="25dp"
         android:layout_marginRight="25dp"
         android:layout_marginBottom="25dp"
-        android:src="@drawable/information" />
+        android:src="@drawable/pencil" />
 
-<!--    <android.support.design.widget.BottomNavigationView-->
-<!--        android:id="@+id/bottom_nav"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_alignParentBottom="true"-->
-<!--        android:layout_alignParentStart="true"-->
-<!--        android:layout_alignParentLeft="true"-->
-<!--        android:background="@color/colorPrimary"-->
-<!--        app:itemIconTint="@android:color/white"-->
-<!--        app:itemTextColor="@android:color/white"-->
-<!--        app:menu="@menu/bottom_nav_menu"-->
-<!--        tools:ignore="RtlHardcoded">-->
-<!--    </android.support.design.widget.BottomNavigationView>-->
 
 </RelativeLayout>

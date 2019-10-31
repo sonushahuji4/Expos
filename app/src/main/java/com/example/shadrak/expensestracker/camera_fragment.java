@@ -71,7 +71,6 @@ public class camera_fragment extends Fragment {
     //Save to File
     private File file;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
-    private boolean mFlashSupported;
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
 

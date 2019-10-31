@@ -37,21 +37,13 @@ public class recyclerviewAdapter extends RecyclerView.Adapter<recyclerviewAdapte
         return viewHolder;
     }
 
-//    @Override
-//    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-//        viewHolder.v_name.setText(mlist.get(i).getVendor());
-//        RecyclerView.ViewHolder.date.setText(mlist.get(i).getDate());
-//        RecyclerView.ViewHolder.cost.setText(mlist.get(i).getAmount());
-//
-//      //  ((MyViewHolder)viewHolder).bind(mlist.get(i));
-//    }
 
     @Override
     public void onBindViewHolder(@NonNull recyclerviewAdapter.MyViewHolder myViewHolder, int i) {
 
         myViewHolder.v_name.setText(mlist.get(i).getVendor());
         myViewHolder.date.setText(mlist.get(i).getDate());
-        myViewHolder.cost.setText(Integer.toString(mlist.get(i).getAmount()));
+        myViewHolder.cost.setText(mlist.get(i).getAmount());
 
     }
 
@@ -73,17 +65,14 @@ public class recyclerviewAdapter extends RecyclerView.Adapter<recyclerviewAdapte
 
         }
 
-//        public MyViewHolder(LinearLayout l) {
-//            super(l);
-//            v_name = (TextView) l.findViewById(R.id.vendor_name);
-//            date = (TextView) l.findViewById(R.id.date);
-//            cost =  (TextView) l.findViewById(R.id.cost);
+//        void setBills(Bills bills) {
+//            String vendor = bills.getVendor();
+//            v_name.setText(vendor);
+//            String Date = bills.getDate();
+//            date.setText(Date);
+//            String amount = bills.getAmount();
+//            cost.setText(amount);
 //        }
-//
-//        public bind(Bills bills){
-//            v_name.setText(bills.getVendor());
-//            date.setText(bills.getDate());
-//            cost.setText(bills.getAmount());
-//        }
+
     }
 }

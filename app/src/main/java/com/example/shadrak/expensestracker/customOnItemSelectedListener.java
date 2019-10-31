@@ -6,7 +6,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 
 class customOnItemSelectedListener implements OnItemSelectedListener {
 
-    String value;
+    public String value;
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {

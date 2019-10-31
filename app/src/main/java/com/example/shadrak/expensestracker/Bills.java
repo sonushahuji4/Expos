@@ -4,13 +4,13 @@ public class Bills {
 
     public String vendor;
     public String date;
-    public int amount;
+    public String amount;
 
     public Bills() {
 
     }
 
-    public Bills(String vendor, String date, int amount) {
+    public Bills(String vendor, String date, String amount) {
         this.vendor = vendor;
         this.date = date;
         this.amount = amount;
@@ -26,7 +26,7 @@ public class Bills {
         return date;
     }
 
-    public int getAmount() {
+    public String getAmount() {
         return amount;
     }
 
@@ -40,7 +40,7 @@ public class Bills {
         date = Date;
     }
 
-    public void setAmount(int cost) {
+    public void setAmount(String cost) {
         amount = cost;
     }
 }

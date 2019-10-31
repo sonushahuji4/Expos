@@ -1,87 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:tag="@string/summary">
+    tools:context=".summary_fragment">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <WebView
+        android:id="@+id/web_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin">
-
-        <fragment
-            android:id="@+id/select_date_fragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:name="com.example.shadrak.expensestracker.select_date_fragment"
-            android:layout_marginTop="@dimen/top_margin"/>
-
-        <TextView
-            android:id="@+id/bar_chart"
-            android:gravity="center"
-            android:layout_gravity="start"
-            android:layout_marginTop="@dimen/top_margin"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="BarChart"/>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_marginTop="@dimen/top_margin">
-
-            <TextView
-                android:id="@+id/bar_chart_empty"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:visibility="gone"
-                android:text="No data available"/>
-
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/bc_categories"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </FrameLayout>
-
-        <TextView
-            android:id="@+id/pie_chart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_gravity="start"
-            android:layout_marginTop="@dimen/top_margin"
-            android:text="PieChart"/>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_25dp"
-            android:layout_marginTop="@dimen/top_margin"
-            android:layout_marginBottom="@dimen/top_margin">
-
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/pc_categories"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <TextView
-                android:id="@+id/pie_chart_empty"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:layout_gravity="center"
-                android:text="No Chart Data Available"/>
-
-        </FrameLayout>
-
-    </LinearLayout>
-
-</android.support.v4.widget.NestedScrollView>
+        android:layout_height="match_parent"/>
+</RelativeLayout>

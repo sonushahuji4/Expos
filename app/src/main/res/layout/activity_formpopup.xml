@@ -62,16 +62,40 @@
             android:layout_marginTop="20dp"
             android:layout_below="@id/amount"/>
 
-        <Spinner
-            android:id="@+id/category"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_below="@id/editdate"
-            android:prompt="@string/category"
-            android:entries="@array/category_array"/>
+<!--        <Spinner-->
+<!--            android:id="@+id/category"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:layout_below="@id/editdate"-->
+<!--            android:prompt="@string/category"-->
+<!--            android:entries="@array/category_array"/>-->
 
         <!-- Here pick image from gallery will come -->
+        <LinearLayout
+            android:id="@+id/upload"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:layout_below="@+id/editdate"
+            android:weightSum="2">
+
+            <TextView
+                android:id="@+id/imageid"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"/>
+
+            <Button
+                android:id="@+id/uploadbtn"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Upload"
+                android:layout_marginTop="20dp" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/submitbutton"
@@ -79,7 +103,7 @@
             android:layout_height="wrap_content"
             android:text="Submit"
             android:layout_marginTop="20dp"
-            android:layout_below="@id/category"
+            android:layout_below="@id/upload"
             android:layout_centerHorizontal="true"/>
         
     </RelativeLayout>

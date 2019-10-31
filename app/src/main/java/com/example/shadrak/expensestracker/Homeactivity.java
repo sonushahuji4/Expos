@@ -36,9 +36,15 @@ public class Homeactivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homeactivity);
 
+
         Bundle bundle = getIntent().getExtras();
         assert bundle != null;
         uid = bundle.getString("uid");
+
+        Bundle bund = new Bundle();
+        bund.putString("userid",uid);
+        bills_fragment billsFragment = new bills_fragment();
+        billsFragment.setArguments(bund);
 
         tabLayout = findViewById(R.id.tablayout);
         viewPager = findViewById(R.id.viewpager);
@@ -59,6 +65,7 @@ public class Homeactivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), formpopup.class);
+                i.putExtra("uid",uid);
                 startActivity(i);
             }
         });

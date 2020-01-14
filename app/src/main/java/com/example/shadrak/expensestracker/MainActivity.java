@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(MainActivity.this,"Login Error, Please Login again!!",Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(MainActivity.this,"Login Successfull!!",Toast.LENGTH_SHORT).show();
-                                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+//                                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
                                 Intent inToHome = new Intent(MainActivity.this, Homeactivity.class);
                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                 uid = user.getUid();

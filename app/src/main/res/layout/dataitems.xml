@@ -36,6 +36,13 @@
             android:text="Amount"
             android:id="@+id/cost"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Place"
+            android:id="@+id/place"
+            android:textDirection="rtl"/>
+
     </LinearLayout>
 
 </LinearLayout>

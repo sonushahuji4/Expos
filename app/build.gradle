@@ -40,7 +40,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:16.0.1'//for floating action button
     implementation 'com.github.PhilJay:MPAndroidChart:v2.1.4'
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'com.firebaseui:firebase-ui-database:6.2.0' //error because of this
+    implementation 'com.firebaseui:firebase-ui-database:3.1.3' //error because of this
 }
 
 apply plugin: 'com.google.gms.google-services'

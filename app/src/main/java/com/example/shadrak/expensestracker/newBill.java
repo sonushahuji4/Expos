@@ -2,21 +2,57 @@ package com.example.shadrak.expensestracker;
 
 public class newBill {
 
-    public String Amount;
-    public String Date;
-    public String Place;
-    public String Category;
-    public String Vendor;
+    private String Amount;
+    private String Date;
+    private String Place;
+    //private String Category;
+    private String Vendor;
 
     public newBill() {
 
     }
 
-    public newBill(String amount, String date, String place, String category, String vendor) {
+    public newBill(String amount, String date, String place, String vendor) {
         this.Amount = amount;
         this.Date = date;
         this.Place = place;
         this.Vendor = vendor;
-        this.Category = category;
+        //this.Category = category;
+    }
+
+    //Getter
+
+    public String getVendor() {
+        return Vendor;
+    }
+
+    public String getDate() {
+        return Date;
+    }
+
+    public String getAmount() {
+        return Amount;
+    }
+
+    public String getPlace() {
+        return Place;
+    }
+
+    //Setter
+
+    public void setVendor(String name) {
+        Vendor = name;
+    }
+
+    public void setDate(String date) {
+        Date = date;
+    }
+
+    public void setAmount(String cost) {
+        Amount = cost;
+    }
+
+    public void setPlace(String place) {
+        Place = place;
     }
 }

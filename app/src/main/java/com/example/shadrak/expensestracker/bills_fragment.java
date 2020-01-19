@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.firebase.ui.database.SnapshotParser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
@@ -26,8 +28,8 @@ public class bills_fragment extends Fragment {
     RecyclerView.LayoutManager layoutManager;
 //    recyclerviewAdapter adapter;         //recyclerviewAdapter class
     DatabaseReference rootref;         //firebase connections
-    private FirebaseRecyclerAdapter<Bills,MyViewHolder> firebaseRecyclerAdapter;        //firebase connections
-    ArrayList<Bills> list;
+    private FirebaseRecyclerAdapter<newBill,MyViewHolder> firebaseRecyclerAdapter;        //firebase connections
+    ArrayList<newBill> list;
     String uid;
 
     @Override
@@ -50,15 +52,30 @@ public class bills_fragment extends Fragment {
 //        Log.d("user",uid);
         rootref = FirebaseDatabase.getInstance().getReference();
         Query query = rootref.child("Bills");
-        FirebaseRecyclerOptions<Bills> firebaseRecyclerOptions = new FirebaseRecyclerOptions.Builder<Bills>()
-                .setQuery(query, Bills.class)
+//        FirebaseRecyclerOptions<newBill> firebaseRecyclerOptions = new FirebaseRecyclerOptions.Builder<newBill>()
+//                .setQuery(query, newBill.class)
+//                .build();
+
+        FirebaseRecyclerOptions<newBill> firebaseRecyclerOptions = new FirebaseRecyclerOptions.Builder<newBill>()
+                .setQuery(query, new SnapshotParser<newBill>() {
+                    @NonNull
+                    @Override
+                    public newBill parseSnapshot(@NonNull DataSnapshot snapshot) {
+                        return new newBill(snapshot.child("amount").getValue().toString(),
+                                snapshot.child("date").getValue().toString(),
+                                snapshot.child("place").getValue().toString(),
+                                snapshot.child("vendor").getValue().toString());
+                    }
+                })
                 .build();
 
-
-        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Bills, MyViewHolder>(firebaseRecyclerOptions) {
+        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<newBill, MyViewHolder>(firebaseRecyclerOptions) {
             @Override
-            protected void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull Bills model) {
-                holder.setBills(model);
+            protected void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull newBill model) {
+                holder.setTextamount(model.getAmount());
+                holder.setTextdate(model.getDate());
+                holder.setTextplace(model.getPlace());
+                holder.setTextvendor(model.getVendor());
             }
 
             @NonNull
@@ -69,6 +86,7 @@ public class bills_fragment extends Fragment {
             }
         };
 
+        recyclerView.setAdapter(firebaseRecyclerAdapter);
 
         return rootview;
     }
@@ -114,7 +132,7 @@ public class bills_fragment extends Fragment {
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView v_name, date, cost;
+        private TextView v_name, date, cost, place;
 
         public MyViewHolder(View view) {
             super(view);
@@ -122,17 +140,34 @@ public class bills_fragment extends Fragment {
             v_name = view.findViewById(R.id.vendor_name);
             date = view.findViewById(R.id.date);
             cost = view.findViewById(R.id.cost);
-
+            place = view.findViewById(R.id.place);
         }
 
-        void setBills(Bills bills) {
-            String vendor = bills.getVendor();
-            v_name.setText(vendor);
-            String Date = bills.getDate();
-            date.setText(Date);
-            String amount = bills.getAmount();
-            cost.setText(amount);
+//        void setBills(newBill bills) {
+//            String vendor = bills.getVendor();
+//            v_name.setText(vendor);
+//            String Date = bills.getDate();
+//            date.setText(Date);
+//            String amount = bills.getAmount();
+//            cost.setText(amount);
+//            String jagah = bills.getPlace();
+//            place.setText(jagah);
+//        }
+
+        public void setTextvendor(String textvendor) {
+            v_name.setText(textvendor);
         }
 
+        public void setTextdate(String textdate) {
+            date.setText(textdate);
+        }
+
+        public void setTextplace(String textplace) {
+            place.setText(textplace);
+        }
+
+        public void setTextamount(String textamount) {
+            cost.setText(textamount);
+        }
     }
 }

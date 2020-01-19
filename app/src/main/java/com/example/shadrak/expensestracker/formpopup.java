@@ -165,8 +165,8 @@ public class formpopup extends Activity {
 
 //                childref.push().setValue(userMap);
 
-                childref.child(uid).child(String.valueOf(billid)).setValue(new newBill(costprice, date, location, Category, vendorname));
-
+                childref.child(uid).child(String.valueOf(billid)).setValue(new newBill(costprice, date, location, vendorname));
+                Toast.makeText(getApplicationContext(),"Submitted",Toast.LENGTH_SHORT).show();
             }
         });
 

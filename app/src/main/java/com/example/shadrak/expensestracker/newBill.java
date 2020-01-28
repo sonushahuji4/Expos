@@ -5,19 +5,19 @@ public class newBill {
     private String Amount;
     private String Date;
     private String Place;
-    //private String Category;
+    private String Category;
     private String Vendor;
 
     public newBill() {
 
     }
 
-    public newBill(String amount, String date, String place, String vendor) {
+    public newBill(String amount, String date, String place, String vendor, String category) {
         this.Amount = amount;
         this.Date = date;
         this.Place = place;
         this.Vendor = vendor;
-        //this.Category = category;
+        this.Category = category;
     }
 
     //Getter
@@ -38,6 +38,8 @@ public class newBill {
         return Place;
     }
 
+    public String getCategory() { return Category; }
+
     //Setter
 
     public void setVendor(String name) {
@@ -55,4 +57,6 @@ public class newBill {
     public void setPlace(String place) {
         Place = place;
     }
+
+    public void setCategory(String category) { Category = category; }
 }

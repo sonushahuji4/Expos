@@ -6,12 +6,5 @@
     <string name="category">Category</string>
     <string name="picture">Capture</string>
     <string name="summary">Summary</string>
-    <string-array name="category_array">
-        <item>Food</item>
-        <item>Travels</item>
-        <item>Medicals</item>
-        <item>Shopping</item>
-        <item>Bills/Recharge</item>
-        <item>Miscellaneous</item>
-    </string-array>
+
 </resources>

@@ -15,10 +15,14 @@ import android.widget.TextView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.database.SnapshotParser;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -26,11 +30,14 @@ public class bills_fragment extends Fragment {
 
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
-//    recyclerviewAdapter adapter;         //recyclerviewAdapter class
+    //    recyclerviewAdapter adapter;         //recyclerviewAdapter class
     DatabaseReference rootref;         //firebase connections
-    private FirebaseRecyclerAdapter<newBill,MyViewHolder> firebaseRecyclerAdapter;        //firebase connections
+    private FirebaseRecyclerAdapter<newBill, MyViewHolder> firebaseRecyclerAdapter;        //firebase connections
     ArrayList<newBill> list;
-    String uid;
+    String uid,amount, date, place, vendor, category;
+    FirebaseAuth firebaseAuth;
+    FirebaseUser user;
+    String userId;
 
     @Override
     public View onCreateView(@Nullable LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -43,7 +50,11 @@ public class bills_fragment extends Fragment {
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-//        Bundle bundle = new Bundle();
+        firebaseAuth = FirebaseAuth.getInstance();
+        user = firebaseAuth.getCurrentUser();
+        userId = user.getUid();
+
+//        Bundle bundle = new Bundle();            //passing userid
 //        uid = bundle.getString("userid");
 
 //        adapter = new recyclerviewAdapter(getActivity(),this.list);
@@ -51,7 +62,7 @@ public class bills_fragment extends Fragment {
 
 //        Log.d("user",uid);
         rootref = FirebaseDatabase.getInstance().getReference();
-        Query query = rootref.child("Bills");
+        Query query = rootref.child("Bills").child(userId);
 //        FirebaseRecyclerOptions<newBill> firebaseRecyclerOptions = new FirebaseRecyclerOptions.Builder<newBill>()
 //                .setQuery(query, newBill.class)
 //                .build();
@@ -61,10 +72,26 @@ public class bills_fragment extends Fragment {
                     @NonNull
                     @Override
                     public newBill parseSnapshot(@NonNull DataSnapshot snapshot) {
-                        return new newBill(snapshot.child("amount").getValue().toString(),
-                                snapshot.child("date").getValue().toString(),
-                                snapshot.child("place").getValue().toString(),
-                                snapshot.child("vendor").getValue().toString());
+                        for (DataSnapshot datasnapshot : snapshot.getChildren()
+                        ) {
+
+                            for (DataSnapshot dataSnapshot1 : datasnapshot.getChildren()){
+
+                                amount = dataSnapshot1.child("amount").getValue().toString();
+                                date = dataSnapshot1.child("date").getValue().toString();
+                                place = dataSnapshot1.child("place").getValue().toString();
+                                vendor = dataSnapshot1.child("vendor").getValue().toString();
+                                category = dataSnapshot1.child("category").getValue().toString();
+                            }
+
+//                            Log.d("done","amount" +
+//                                    amount);
+                        }
+                        return new newBill(amount,
+                                date,
+                                place,
+                                vendor,
+                                category);
                     }
                 })
                 .build();
@@ -76,6 +103,7 @@ public class bills_fragment extends Fragment {
                 holder.setTextdate(model.getDate());
                 holder.setTextplace(model.getPlace());
                 holder.setTextvendor(model.getVendor());
+                holder.setTextcategory(model.getCategory());
             }
 
             @NonNull
@@ -91,48 +119,21 @@ public class bills_fragment extends Fragment {
         return rootview;
     }
 
-//    private void linearlist() {
-//
-//        list = new ArrayList<Bills>();
-//        list.add(new Bills("Hanumant","09/08/19","811"));
-//        list.add(new Bills("BigBazar", "10/07/07", "200"));
-//        list.add(new Bills("Indian Oil", "23/06/07", "500"));
-//        list.add(new Bills("Sai Leela", "10/12/18", "1200"));
-//        list.add(new Bills("PVR Cinemas", "18/10/12", "1600"));
-//        list.add(new Bills("Airtel", "05/04/16", "2000"));
-//        list.add(new Bills("Nandini Tours & Travels", "16/07/19", "10000"));
-//        list.add(new Bills("Hanumant","09/08/19","811"));
-//        list.add(new Bills("BigBazar", "10/07/07", "200"));
-//        list.add(new Bills("Indian Oil", "23/06/07", "500"));
-//        list.add(new Bills("Sai Leela", "10/12/18", "1200"));
-//        list.add(new Bills("PVR Cinemas", "18/10/12", "1600"));
-//        list.add(new Bills("Airtel", "05/04/16", "2000"));
-//        list.add(new Bills("Nandini Tours & Travels", "16/07/19", "10000"));
-//        list.add(new Bills("Hanumant","09/08/19","811"));
-//        list.add(new Bills("BigBazar", "10/07/07", "200"));
-//        list.add(new Bills("Indian Oil", "23/06/07", "500"));
-//        list.add(new Bills("Sai Leela", "10/12/18", "1200"));
-//        list.add(new Bills("PVR Cinemas", "18/10/12", "1600"));
-//        list.add(new Bills("Airtel", "05/04/16", "2000"));
-//        list.add(new Bills("Nandini Tours & Travels", "16/07/19", "10000"));
-//
-//    }
-
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
         firebaseRecyclerAdapter.startListening();
     }
 
     @Override
-    public void onStop(){
+    public void onStop() {
         super.onStop();
         firebaseRecyclerAdapter.stopListening();
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView v_name, date, cost, place;
+        private TextView v_name, date, cost, place, category;
 
         public MyViewHolder(View view) {
             super(view);
@@ -141,6 +142,8 @@ public class bills_fragment extends Fragment {
             date = view.findViewById(R.id.date);
             cost = view.findViewById(R.id.cost);
             place = view.findViewById(R.id.place);
+            category = view.findViewById(R.id.category);
+
         }
 
 //        void setBills(newBill bills) {
@@ -169,5 +172,7 @@ public class bills_fragment extends Fragment {
         public void setTextamount(String textamount) {
             cost.setText(textamount);
         }
+
+        public void setTextcategory(String textcategory) { category.setText(textcategory); }
     }
 }

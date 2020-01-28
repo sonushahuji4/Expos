@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,8 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.app.DatePickerDialog;
@@ -26,8 +29,11 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -40,6 +46,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -54,7 +61,7 @@ public class formpopup extends Activity {
     Button submit, upload;
     DatePickerDialog.OnDateSetListener onDateSetListener;
     String vendorname, location, costprice, Category, date, uid, filename;
-    Spinner category;
+    Spinner category_spin;
     DatabaseReference rootref, childref;
     private Uri filePath;
     TextView file;
@@ -73,8 +80,45 @@ public class formpopup extends Activity {
         assert bundle != null;
         uid = bundle.getString("uid");
 
-        //spinner
-//        addListenerOnSpinnerItemSelection();
+        //firebase stuff
+        rootref = FirebaseDatabase.getInstance().getReference();
+
+        // Spinner code -------- Starts
+        rootref.child("Category").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ArrayList<String> cate = new ArrayList<>();
+                category_spin = findViewById(R.id.category);
+
+                for (DataSnapshot categorySnapshot: dataSnapshot.getChildren()) {
+                    String cat = categorySnapshot.getValue(String.class);
+                    cate.add(cat);
+                }
+
+                ArrayAdapter<String> cat_adap = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, cate);
+                cat_adap.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                category_spin.setAdapter(cat_adap);
+
+                category_spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                        Category = (String) adapterView.getSelectedItem();
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        // Spinner code ---------- Ends
 
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -107,8 +151,6 @@ public class formpopup extends Activity {
             }
         });
 
-        //firebase stuff
-        rootref = FirebaseDatabase.getInstance().getReference();
 
         // Pick date function
         edit_date.setOnClickListener(new View.OnClickListener(){
@@ -145,11 +187,7 @@ public class formpopup extends Activity {
                 vendorname = vendor.getText().toString();
                 location = place.getText().toString();
                 costprice = amount.getText().toString();
-                //Category = category.getText().toString();
-                customOnItemSelectedListener obj = new customOnItemSelectedListener();
-                Category = obj.getValue();
                 date = edit_date.getText().toString();
-//                Toast.makeText(getApplicationContext(),"category is "+Category,Toast.LENGTH_SHORT).show();
 
                 //get userid
                 Random r = new Random();
@@ -159,14 +197,9 @@ public class formpopup extends Activity {
                 //childref = rootref.child("Bills").child(userid);
                 childref = rootref.child("Bills");
 
-//                Map<String, newBill> bills = new HashMap<>();
-//                bills.put(String.valueOf(billid), new newBill(costprice, date, location, Category, vendorname));
-
-
-//                childref.push().setValue(userMap);
-
-                childref.child(uid).child(String.valueOf(billid)).setValue(new newBill(costprice, date, location, vendorname));
+                childref.child(uid).child(String.valueOf(billid)).setValue(new newBill(costprice, date, location, vendorname, Category));
                 Toast.makeText(getApplicationContext(),"Submitted",Toast.LENGTH_SHORT).show();
+                finish();
             }
         });
 
@@ -244,8 +277,4 @@ public class formpopup extends Activity {
         }
     }
 
-//    private void addListenerOnSpinnerItemSelection() {
-//        category = (Spinner) findViewById(R.id.category);
-//        category.setOnItemSelectedListener(new customOnItemSelectedListener());
-//    }
 }

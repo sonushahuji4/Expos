@@ -1,8 +1,10 @@
 package com.example.shadrak.expensestracker;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -39,6 +41,9 @@ public class bills_fragment extends Fragment {
     FirebaseUser user;
     String userId;
 
+    FloatingActionButton fab;
+
+
     @Override
     public View onCreateView(@Nullable LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 //        linearlist();
@@ -53,6 +58,17 @@ public class bills_fragment extends Fragment {
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
         userId = user.getUid();
+
+//        fab = rootview.findViewById(R.id.fab);
+//
+//        fab.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View v) {
+//                Intent i = new Intent(getContext(), formpopup.class);
+//                i.putExtra("uid",userId);
+//                startActivity(i);
+//            }
+//        });
 
 //        Bundle bundle = new Bundle();            //passing userid
 //        uid = bundle.getString("userid");

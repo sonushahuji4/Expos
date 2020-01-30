@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -42,7 +43,7 @@ public class Homeactivity extends AppCompatActivity {
         uid = bundle.getString("uid");
 
         Bundle bund = new Bundle();
-        bund.putString("userid",uid);
+        bund.putString("userid", uid);
         bills_fragment billsFragment = new bills_fragment();
         billsFragment.setArguments(bund);
 
@@ -75,21 +76,21 @@ public class Homeactivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.option_menu,menu);
+        inflater.inflate(R.menu.option_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.logout:
                 FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(this,MainActivity.class));
+                startActivity(new Intent(this, MainActivity.class));
                 finish();
                 return true;
             case R.id.profile:
                 Intent i = new Intent(this, ProfileActivity.class);
-                i.putExtra("uid",uid);
+                i.putExtra("uid", uid);
                 startActivity(i);
                 Toast.makeText(this, "Profile Page", Toast.LENGTH_SHORT).show();
                 return true;
@@ -97,7 +98,6 @@ public class Homeactivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
 
 
 }

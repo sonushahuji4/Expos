@@ -8,10 +8,6 @@ public class newBill {
     private String Category;
     private String Vendor;
 
-    public newBill() {
-
-    }
-
     public newBill(String amount, String date, String place, String vendor, String category) {
         this.Amount = amount;
         this.Date = date;

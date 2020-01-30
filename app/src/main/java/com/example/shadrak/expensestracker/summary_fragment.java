@@ -58,32 +58,42 @@ public class summary_fragment extends Fragment {
 
         rootref = FirebaseDatabase.getInstance().getReference();
         childref = rootref.child("Bills").child(userId);
-        final ValueEventListener billsDataListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                DataSnapshot billSnapshot = dataSnapshot.child("Bills").child(userId);
-                Iterable<DataSnapshot> billchildren = billSnapshot.getChildren();
-                ArrayList<PieEntry> values = new ArrayList<>();
-                for (DataSnapshot bill : billchildren) {
-                    newBill bills = bill.getValue(newBill.class);
-                    values.add(new PieEntry(bills.getAmount(), bills.getCategory()));
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        }
+//        final ValueEventListener billsDataListener = new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                DataSnapshot billSnapshot = dataSnapshot.child("Bills").child(userId);
+//                Iterable<DataSnapshot> billchildren = billSnapshot.getChildren();
+//                ArrayList<PieEntry> values = new ArrayList<>();
+//                for (DataSnapshot bill : billchildren) {
+//                    newBill bills = bill.getValue(newBill.class);
+//                    values.add(new PieEntry(Float.parseFloat(bills.getAmount()), bills.getCategory()));
+//
+//                    PieDataSet pieDataSet = new PieDataSet(values, "Names");
+//                    pieDataSet.setSliceSpace(3f);
+//                    pieDataSet.setSelectionShift(5f);
+//                    pieDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
+//
+//                    PieData pieData = new PieData(pieDataSet);
+//                    pieData.setValueTextSize(10f);
+//                    pieData.setValueTextColor(Color.YELLOW);
+//
+//                    pieChart.setData(pieData);
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        };
 
         ArrayList<PieEntry> values = new ArrayList<>();
 
-        values.add(new PieEntry(34f, "Shadrak"));
-        values.add(new PieEntry(23f, "hatt"));
-        values.add(new PieEntry(14f, "jaa be"));
-        values.add(new PieEntry(35f, "Chaitaniya"));
-        values.add(new PieEntry(40f, "lol"));
-        values.add(new PieEntry(23, "Shubham"));
+        values.add(new PieEntry(98, "Misc"));
+        values.add(new PieEntry(84, "Travel"));
+        values.add(new PieEntry(98, "Medical"));
+        values.add(new PieEntry(899, "Food"));
+        values.add(new PieEntry(98, "Food"));
 
         Description description = new Description();
         description.setText("This is PieChart");

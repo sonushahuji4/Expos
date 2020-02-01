@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:menu="@menu/option_menu"
     tools:context=".Homeactivity"
+    android:id="@+id/relativelayout"
     android:orientation="vertical">
 
     <android.support.design.widget.TabLayout

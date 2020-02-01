@@ -1,7 +1,14 @@
 package com.example.shadrak.expensestracker;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +23,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import android.view.MenuItem;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class Homeactivity extends AppCompatActivity {
@@ -28,6 +37,13 @@ public class Homeactivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     FirebaseDatabase ref;
 
+    public static int TYPE_WIFI = 1;
+    public static int TYPE_MOBILE = 2;
+    public static int TYPE_NOT_CONNECTED = 0;
+    private Snackbar snackbar;
+    private RelativeLayout relativeLayout;
+    private boolean internetConnected=true;
+
 
 //    FloatingActionMenu floatingActionMenu;
     FloatingActionButton fab;
@@ -37,6 +53,7 @@ public class Homeactivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homeactivity);
 
+        relativeLayout = (RelativeLayout) findViewById(R.id.relativelayout);
 
         Bundle bundle = getIntent().getExtras();
         assert bundle != null;
@@ -99,6 +116,87 @@ public class Homeactivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerInternetCheckReceiver();
+    }
+
+    private void registerInternetCheckReceiver() {
+        IntentFilter internetFilter = new IntentFilter();
+        internetFilter.addAction("android.net.wifi.STATE_CHANGE");
+        internetFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        registerReceiver(broadcastReceiver, internetFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(broadcastReceiver);
+    }
+
+    public BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String status = getConnectivityStatusString(context);
+            setSnackbarMessage(status,false);
+        }
+    };
+
+    public static int getConnectivityStatus(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (null != activeNetwork) {
+            if(activeNetwork.getType() == ConnectivityManager.TYPE_WIFI)
+                return TYPE_WIFI;
+
+            if(activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE)
+                return TYPE_MOBILE;
+        }
+        return TYPE_NOT_CONNECTED;
+    }
+
+    public static String getConnectivityStatusString(Context context) {
+        int conn = getConnectivityStatus(context);
+        String status = null;
+        if (conn == TYPE_WIFI) {
+            status = "Wifi enabled";
+        } else if (conn == TYPE_MOBILE) {
+            status = "Mobile data enabled";
+        } else if (conn == TYPE_NOT_CONNECTED) {
+            status = "Not connected to Internet";
+        }
+        return status;
+    }
+    private void setSnackbarMessage(String status,boolean showBar) {
+        String internetStatus="";
+        if(status.equalsIgnoreCase("Wifi enabled")||status.equalsIgnoreCase("Mobile data enabled")){
+            internetStatus="Connected to Internet";
+        }else {
+            internetStatus="No Internet Connection";
+        }
+        snackbar = Snackbar
+                .make(relativeLayout, internetStatus, Snackbar.LENGTH_LONG);
+
+        // Changing message text color
+        snackbar.setActionTextColor(Color.WHITE);
+        // Changing action button text color
+        View sbView = snackbar.getView();
+        TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+        textView.setTextColor(Color.WHITE);
+        if(internetStatus.equalsIgnoreCase("Lost Internet Connection")){
+            if(internetConnected){
+                snackbar.show();
+                internetConnected=false;
+            }
+        }else{
+            if(!internetConnected){
+                internetConnected=true;
+                snackbar.show();
+            }
+        }
+    }
 
 }
 

@@ -45,6 +45,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -63,7 +64,7 @@ public class formpopup extends Activity {
     String vendorname, location, costprice, Category, date, uid, filename;
     Spinner category_spin;
     DatabaseReference rootref, childref;
-    private Uri filePath;
+    private Uri filePath, selectedImage;
     TextView file;
     private final int PICK_IMAGE_REQUEST = 71;
 
@@ -82,6 +83,7 @@ public class formpopup extends Activity {
 
         //firebase stuff
         rootref = FirebaseDatabase.getInstance().getReference();
+        storageReference = FirebaseStorage.getInstance().getReference();
 
         // Spinner code -------- Starts
         rootref.child("Category").addValueEventListener(new ValueEventListener() {
@@ -147,7 +149,7 @@ public class formpopup extends Activity {
             @Override
             public void onClick(View view) {
                 chooseImage();
-                uploadImage();
+                //uploadImage();
             }
         });
 
@@ -180,7 +182,7 @@ public class formpopup extends Activity {
           }
         };
 
-        submit.setOnClickListener(new View.OnClickListener() {
+        submit.setOnClickListener(  new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.i("button","submit button clicked");
@@ -199,6 +201,7 @@ public class formpopup extends Activity {
 
                 childref.child(uid).child(String.valueOf(billid)).setValue(new newBill(costprice, date, location, vendorname, Category));
                 Toast.makeText(getApplicationContext(),"Submitted",Toast.LENGTH_SHORT).show();
+                uploadImage(billid);
                 finish();
             }
         });
@@ -229,7 +232,7 @@ public class formpopup extends Activity {
 //            {
 //                e.printStackTrace();
 //            }
-            Uri selectedImage = data.getData();
+            selectedImage = data.getData();
             String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
             Cursor cursor = getContentResolver().query(selectedImage,
@@ -237,32 +240,35 @@ public class formpopup extends Activity {
             cursor.moveToFirst();
 
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String picturePath = cursor.getString(columnIndex);
-            file.setText(picturePath);
+            String storagePath = cursor.getString(columnIndex);
+            file.setText(storagePath);
             cursor.close();
         }
     }
 
-    private void uploadImage() {
-        if(filePath != null)
-        {
-            final ProgressDialog progressDialog = new ProgressDialog(this);
-            progressDialog.setTitle("Uploading...");
-            progressDialog.show();
+    private void uploadImage(int billid) {
+//        if(filePath != null)
+//        {
+//            final ProgressDialog progressDialog = new ProgressDialog(this);
+//            progressDialog.setTitle("Uploading...");
+//            progressDialog.show();
 
-            StorageReference ref = storageReference.child("images/"+ UUID.randomUUID().toString());
-            ref.putFile(filePath)
+            Uri uri = selectedImage;
+            StorageReference ref = storageReference.child(uid).child(String.valueOf(billid)).child(uri.getLastPathSegment());
+            ref.putFile(selectedImage)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
+//                            if(progressDialog != null && progressDialog.isShowing()) {
+//                                progressDialog.dismiss();
+//                            }
                             Toast.makeText(getApplicationContext(), "Uploaded", Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
+//                            progressDialog.dismiss();
                             Toast.makeText(getApplicationContext(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     })
@@ -271,10 +277,10 @@ public class formpopup extends Activity {
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                             double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
                                     .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
+//                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
                         }
                     });
-        }
+//        }
     }
 
 }

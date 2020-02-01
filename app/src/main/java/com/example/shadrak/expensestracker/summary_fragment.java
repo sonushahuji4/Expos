@@ -5,6 +5,7 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.internal.FlowLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +34,11 @@ public class summary_fragment extends Fragment {
     FirebaseUser User;
     String userId;
     DatabaseReference rootref, childref;
+    ArrayList<DataSnapshot> bill;
+    String category[];
+    Float amount[];
 
+    ArrayList<PieEntry> values;
     PieChart pieChart;
 
     public View onCreateView(@Nullable LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,65 +60,76 @@ public class summary_fragment extends Fragment {
         pieChart.setHoleColor(Color.WHITE);
         pieChart.setTransparentCircleRadius(51f);
 
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        rootref = database.getReference("Bills").child(userId);
 
-        rootref = FirebaseDatabase.getInstance().getReference();
-        childref = rootref.child("Bills").child(userId);
-//        final ValueEventListener billsDataListener = new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                DataSnapshot billSnapshot = dataSnapshot.child("Bills").child(userId);
-//                Iterable<DataSnapshot> billchildren = billSnapshot.getChildren();
-//                ArrayList<PieEntry> values = new ArrayList<>();
-//                for (DataSnapshot bill : billchildren) {
-//                    newBill bills = bill.getValue(newBill.class);
-//                    values.add(new PieEntry(Float.parseFloat(bills.getAmount()), bills.getCategory()));
-//
-//                    PieDataSet pieDataSet = new PieDataSet(values, "Names");
-//                    pieDataSet.setSliceSpace(3f);
-//                    pieDataSet.setSelectionShift(5f);
-//                    pieDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
-//
-//                    PieData pieData = new PieData(pieDataSet);
-//                    pieData.setValueTextSize(10f);
-//                    pieData.setValueTextColor(Color.YELLOW);
-//
-//                    pieChart.setData(pieData);
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        };
+        values = new ArrayList<>();
 
-        ArrayList<PieEntry> values = new ArrayList<>();
+        rootref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-        values.add(new PieEntry(98, "Misc"));
-        values.add(new PieEntry(84, "Travel"));
-        values.add(new PieEntry(98, "Medical"));
-        values.add(new PieEntry(899, "Food"));
-        values.add(new PieEntry(98, "Food"));
+                int size = (int) dataSnapshot.getChildrenCount();
+                bill = new ArrayList<DataSnapshot>();
+                category = new String[size+1];
+                amount = new Float[size+1];
+                String cat = "";
+                Float price = 0f;
 
-        Description description = new Description();
-        description.setText("This is PieChart");
-        description.setTextSize(15);
-//        description.setTextAlign(Paint.Align.CENTER);
-        pieChart.setDescription(description);
+                int i = 0, j, index = 0, flag = 0;
+                for(DataSnapshot data: dataSnapshot.getChildren()){
+                    values.clear();
+                    cat = data.child("category").getValue(String.class);
+                    price = Float.valueOf(data.child("amount").getValue(String.class));
 
-        pieChart.animateY(1000, Easing.EasingOption.EaseInOutCubic);
+                    for(j = 0; j <= i; j++) {
+                        if (cat == category[j]) {
+                            flag = 1;
+                            index = j;
+                            break;
+                        }
+                    }
+                    if (flag == 0) {
+                        category[i+1] = cat;
+                        amount[i+1] = price;
+                    } else {
+                        amount[index] = amount[index] + price;
+                    }
+                    i++;
+                }
 
-        PieDataSet pieDataSet = new PieDataSet(values, "Names");
-        pieDataSet.setSliceSpace(3f);
-        pieDataSet.setSelectionShift(5f);
-        pieDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
+                for(i = 0; i < size; i++) {
+                    values.add(new PieEntry(amount[i], category[i]));
+                }
 
-        PieData pieData = new PieData(pieDataSet);
-        pieData.setValueTextSize(10f);
-        pieData.setValueTextColor(Color.YELLOW);
+                Description description = new Description();
+                description.setText("This is PieChart");
+                description.setTextSize(15);
+                pieChart.setDescription(description);
 
-        pieChart.setData(pieData);
+                pieChart.animateY(1000, Easing.EasingOption.EaseInOutCubic);
 
+                PieDataSet pieDataSet = new PieDataSet(values, "Names");
+                pieDataSet.setSliceSpace(3f);
+                pieDataSet.setSelectionShift(5f);
+                pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+//        pieDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
+
+                PieData pieData = new PieData(pieDataSet);
+                pieData.setValueTextSize(10f);
+                pieData.setValueTextColor(Color.YELLOW);
+
+                pieChart.setData(pieData);
+                pieChart.notifyDataSetChanged();
+                pieChart.invalidate();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         return rootview;
     }

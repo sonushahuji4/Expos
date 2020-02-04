@@ -88,6 +88,7 @@ public class Registeractivity extends AppCompatActivity {
 
                                     i.putExtra("uid", uid); // Passing data between activities
                                     startActivity(i);
+                                    finish();
                                 }
                             }
                         }

@@ -35,8 +35,8 @@ public class summary_fragment extends Fragment {
     String userId;
     DatabaseReference rootref, childref;
     ArrayList<DataSnapshot> bill;
-    String category[];
-    Float amount[];
+    String[] category;
+    Float[] amount;
 
     ArrayList<PieEntry> values;
     PieChart pieChart;
@@ -46,9 +46,10 @@ public class summary_fragment extends Fragment {
 
         firebaseAuth = FirebaseAuth.getInstance();
         User = firebaseAuth.getCurrentUser();
+        assert User != null;
         userId = User.getUid();
 
-        pieChart = (PieChart) rootview.findViewById(R.id.piechart);
+        pieChart = rootview.findViewById(R.id.piechart);
 
         pieChart.setUsePercentValues(true);
         pieChart.getDescription().setEnabled(false);
@@ -61,7 +62,8 @@ public class summary_fragment extends Fragment {
         pieChart.setTransparentCircleRadius(51f);
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        rootref = database.getReference("Bills").child(userId);
+        //rootref = database.getReference("Bills").child(userId);
+        rootref = database.getReference().child("Bills").child(userId);
 
         values = new ArrayList<>();
 
@@ -98,8 +100,15 @@ public class summary_fragment extends Fragment {
                     i++;
                 }
 
-                for(i = 0; i < size; i++) {
-                    values.add(new PieEntry(amount[i], category[i]));
+                if(amount != null && category != null) {
+                    for(i = 0; i < size; i++) {
+                        values.add(new PieEntry(amount[i], category[i]));
+                    }
+                } else {
+                    //Static values
+                    values.add(new PieEntry(57f, "Food"));
+                    values.add(new PieEntry(8f, "Medical"));
+                    values.add(new PieEntry(25f, "travel"));
                 }
 
                 Description description = new Description();

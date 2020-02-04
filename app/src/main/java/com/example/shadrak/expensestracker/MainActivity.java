@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
                                 uid = user.getUid();
                                 inToHome.putExtra("uid",uid);
                                 startActivity(inToHome);
+                                finish();
                             }
                         }
                     });
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent i = new Intent(MainActivity.this, Registeractivity.class);
                 startActivity(i);
+                finish();
             }
         });
     }

@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.internal.FlowLayout;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
+
+import static com.google.android.gms.common.internal.safeparcel.SafeParcelable.NULL;
 
 public class summary_fragment extends Fragment {
 
@@ -78,30 +83,37 @@ public class summary_fragment extends Fragment {
                 String cat = "";
                 Float price = 0f;
 
-                int i = 0, j, index = 0, flag = 0;
+                int i = 0, j, index = 0, flag = 0, count = 0;
                 for(DataSnapshot data: dataSnapshot.getChildren()){
                     values.clear();
                     cat = data.child("category").getValue(String.class);
                     price = Float.valueOf(data.child("amount").getValue(String.class));
-
+//                    Log.d("cat & price:","cat: "+ cat +" price: "+price);
                     for(j = 0; j <= i; j++) {
-                        if (cat == category[j]) {
+                        if (Objects.equals(cat, String.valueOf(category[j]))) { // checking if category is already present in array
+                            Log.d("tp","2");
                             flag = 1;
                             index = j;
                             break;
                         }
+                        Log.d("tp","1");
                     }
+                    Log.d("flag","flag="+flag+" i="+i);
                     if (flag == 0) {
-                        category[i+1] = cat;
-                        amount[i+1] = price;
+                        category[i] = cat;
+                        amount[i] = price;
+                        count++;
                     } else {
                         amount[index] = amount[index] + price;
+                        flag = 0;
                     }
                     i++;
+                    Log.d("array","array-"+category[0]+" "+category[1]+" "+category[2]+" "+category[3]+" "+category[4]+" "+category[5]);
                 }
 
                 if(amount != null && category != null) {
-                    for(i = 0; i < size; i++) {
+                    for(i = 0; i < count; i++) {
+                        Log.d("value of pie-entry","value - "+amount[i]);
                         values.add(new PieEntry(amount[i], category[i]));
                     }
                 } else {
@@ -111,10 +123,10 @@ public class summary_fragment extends Fragment {
                     values.add(new PieEntry(25f, "travel"));
                 }
 
-                Description description = new Description();
-                description.setText("This is PieChart");
-                description.setTextSize(15);
-                pieChart.setDescription(description);
+//                Description description = new Description();
+//                description.setText("This is PieChart");
+//                description.setTextSize(15);
+//                pieChart.setDescription(description);
 
                 pieChart.animateY(1000, Easing.EasingOption.EaseInOutCubic);
 

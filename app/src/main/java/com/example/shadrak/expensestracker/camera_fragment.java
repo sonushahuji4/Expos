@@ -48,11 +48,21 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import javax.xml.transform.Result;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 
 public class camera_fragment extends Fragment {
 
     private Button captureBtn;
     private TextureView imageView;
+
+    Image image;
 
     //Check orientation of output image
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
@@ -170,7 +180,7 @@ public class camera_fragment extends Fragment {
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader imageReader) {
-                    Image image = null;
+                    image = null;
                     try{
                         image = reader.acquireLatestImage();
                         ByteBuffer buffer = image.getPlanes()[0].getBuffer();
@@ -197,6 +207,43 @@ public class camera_fragment extends Fragment {
                     }
                 }
             };
+
+            //retrofit2
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(API.Base_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+
+            API apiInterface = retrofit.create(API.class);
+
+            try{
+
+                RequestData req = new RequestData();
+                req.setImage(image);
+
+                Call<ResultData> resultDataCall =  apiInterface.getresult(req);
+                resultDataCall.enqueue(new Callback<ResultData>() {
+                    @Override
+                    public void onResponse(Call<ResultData> call, Response<ResultData> response) {
+
+                        ResultData res = response.body();
+
+                        if(res == null)
+                            return;
+
+                        Toast.makeText(getActivity(), "Response is "+res.toString(),Toast.LENGTH_SHORT).show();
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResultData> call, Throwable t) {
+
+                    }
+                });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             reader.setOnImageAvailableListener(readerListener,mBackgroundHandler);
             final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {

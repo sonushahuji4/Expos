@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(!task.isSuccessful()) {
-                                Toast.makeText(MainActivity.this,"Login Error, Please Login again!!",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this,"Email/Password is incorrect",Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(MainActivity.this,"Login Successfull!!",Toast.LENGTH_SHORT).show();
 //                                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();

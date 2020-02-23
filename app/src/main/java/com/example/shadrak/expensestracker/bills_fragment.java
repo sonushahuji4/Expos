@@ -59,29 +59,9 @@ public class bills_fragment extends Fragment {
         user = firebaseAuth.getCurrentUser();
         userId = user.getUid();
 
-//        fab = rootview.findViewById(R.id.fab);
-//
-//        fab.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v) {
-//                Intent i = new Intent(getContext(), formpopup.class);
-//                i.putExtra("uid",userId);
-//                startActivity(i);
-//            }
-//        });
 
-//        Bundle bundle = new Bundle();            //passing userid
-//        uid = bundle.getString("userid");
-
-//        adapter = new recyclerviewAdapter(getActivity(),this.list);
-//        recyclerView.setAdapter(adapter);
-
-//        Log.d("user",uid);
         rootref = FirebaseDatabase.getInstance().getReference();
         Query query = rootref.child("Bills").child(userId);
-//        FirebaseRecyclerOptions<newBill> firebaseRecyclerOptions = new FirebaseRecyclerOptions.Builder<newBill>()
-//                .setQuery(query, newBill.class)
-//                .build();
 
         FirebaseRecyclerOptions<newBill> firebaseRecyclerOptions = new FirebaseRecyclerOptions.Builder<newBill>()
                 .setQuery(query, new SnapshotParser<newBill>() {
@@ -100,8 +80,6 @@ public class bills_fragment extends Fragment {
                                 category = dataSnapshot1.child("category").getValue().toString();
                             }
 
-//                            Log.d("done","amount" +
-//                                    amount);
                         }
                         return new newBill(amount,
                                 date,
@@ -161,17 +139,6 @@ public class bills_fragment extends Fragment {
             category = view.findViewById(R.id.category);
 
         }
-
-//        void setBills(newBill bills) {
-//            String vendor = bills.getVendor();
-//            v_name.setText(vendor);
-//            String Date = bills.getDate();
-//            date.setText(Date);
-//            String amount = bills.getAmount();
-//            cost.setText(amount);
-//            String jagah = bills.getPlace();
-//            place.setText(jagah);
-//        }
 
         public void setTextvendor(String textvendor) {
             v_name.setText(textvendor);

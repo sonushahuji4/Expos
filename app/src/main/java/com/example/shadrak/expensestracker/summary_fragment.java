@@ -103,11 +103,11 @@ public class summary_fragment extends Fragment {
                         category[i] = cat;
                         amount[i] = price;
                         count++;
+                        i++;
                     } else {
                         amount[index] = amount[index] + price;
                         flag = 0;
                     }
-                    i++;
                     Log.d("array","array-"+category[0]+" "+category[1]+" "+category[2]+" "+category[3]+" "+category[4]+" "+category[5]);
                 }
 

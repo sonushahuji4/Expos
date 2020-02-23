@@ -175,8 +175,9 @@ public class camera_fragment extends Fragment {
 
             String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
             String imageName = "JPEG_" + timestamp;
+            String fileName = imageName + ".jpg";
 
-            file = new File(Environment.DIRECTORY_PICTURES+"/"+ imageName +".jpg");
+            file = new File(Environment.getExternalStorageDirectory()+"/"+fileName);
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader imageReader) {
@@ -260,6 +261,13 @@ public class camera_fragment extends Fragment {
                 public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
                     try{
                         cameraCaptureSession.capture(captureBuilder.build(),captureListener,mBackgroundHandler);
+                        cameraCaptureSessions = cameraCaptureSession;
+                        try {
+                            cameraCaptureSessions.stopRepeating();
+                            cameraCaptureSessions.abortCaptures();
+                        } catch (CameraAccessException e) {
+                            e.printStackTrace();
+                        }
                     } catch (CameraAccessException e) {
                         e.printStackTrace();
                     }
@@ -290,6 +298,12 @@ public class camera_fragment extends Fragment {
                     if(cameraDevice == null)
                         return;
                     cameraCaptureSessions = cameraCaptureSession;
+                    try {
+                        cameraCaptureSessions.stopRepeating();
+                        cameraCaptureSessions.abortCaptures();
+                    } catch (CameraAccessException e) {
+                        e.printStackTrace();
+                    }
                     updatePreview();
                 }
                 @Override
@@ -308,6 +322,13 @@ public class camera_fragment extends Fragment {
         captureRequestBuilder.set(CaptureRequest.CONTROL_MODE,CaptureRequest.CONTROL_MODE_AUTO);
         try{
             cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(),null,mBackgroundHandler);
+
+            try {
+                cameraCaptureSessions.stopRepeating();
+                cameraCaptureSessions.abortCaptures();
+            } catch (CameraAccessException e) {
+                e.printStackTrace();
+            }
         }catch (CameraAccessException e) {
             e.printStackTrace();
         }

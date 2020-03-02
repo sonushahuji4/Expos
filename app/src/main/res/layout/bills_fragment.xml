@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:fillViewport="true"
-    android:background="@color/lightblue"
+    android:background="#3badfc"
     tools:context=".bills_fragment">
 
     <android.support.v7.widget.RecyclerView
@@ -13,21 +13,7 @@
         android:layout_width="match_parent"
         android:scrollbars="vertical"
         android:layout_height="fill_parent"
-        android:background="@color/common_google_signin_btn_text_dark_pressed">
-
-<!--    <android.support.design.widget.FloatingActionButton-->
-<!--        android:id="@+id/fab"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_alignParentRight="true"-->
-<!--        android:layout_alignParentBottom="true"-->
-<!--        android:layout_marginStart="25dp"-->
-<!--        android:layout_marginLeft="10dp"-->
-<!--        android:layout_marginTop="25dp"-->
-<!--        android:layout_marginEnd="25dp"-->
-<!--        android:layout_marginRight="25dp"-->
-<!--        android:layout_marginBottom="25dp"-->
-<!--        android:src="@drawable/pencil" />-->
+        android:background="#b3bcef">
 
     </android.support.v7.widget.RecyclerView>
 

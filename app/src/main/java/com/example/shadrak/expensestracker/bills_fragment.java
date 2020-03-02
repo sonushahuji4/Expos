@@ -2,6 +2,7 @@ package com.example.shadrak.expensestracker;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -13,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -32,9 +34,9 @@ public class bills_fragment extends Fragment {
 
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
-    //    recyclerviewAdapter adapter;         //recyclerviewAdapter class
+    recyclerviewAdapter adapter;         //recyclerviewAdapter class
     DatabaseReference rootref;         //firebase connections
-    private FirebaseRecyclerAdapter<newBill, MyViewHolder> firebaseRecyclerAdapter;        //firebase connections
+//    private FirebaseRecyclerAdapter<newBill, MyViewHolder> firebaseRecyclerAdapter;        //firebase connections
     ArrayList<newBill> list;
     String uid,amount, date, place, vendor, category;
     FirebaseAuth firebaseAuth;
@@ -46,116 +48,72 @@ public class bills_fragment extends Fragment {
 
     @Override
     public View onCreateView(@Nullable LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//        linearlist();
-        View rootview = inflater.inflate(R.layout.bills_fragment, container, false);
 
-        //Recyclerview
-        recyclerView = rootview.findViewById(R.id.bills_recyclerview);
-        recyclerView.hasFixedSize();
-        layoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(layoutManager);
+        View rootview = inflater.inflate(R.layout.bills_fragment, container, false);
 
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
         userId = user.getUid();
 
+        list = new ArrayList<>();
+
+
+        //Recyclerview
+        recyclerView = rootview.findViewById(R.id.bills_recyclerview);
+//        recyclerView.hasFixedSize();
+
+        populate_list(userId);
 
         rootref = FirebaseDatabase.getInstance().getReference();
         Query query = rootref.child("Bills").child(userId);
 
-        FirebaseRecyclerOptions<newBill> firebaseRecyclerOptions = new FirebaseRecyclerOptions.Builder<newBill>()
-                .setQuery(query, new SnapshotParser<newBill>() {
-                    @NonNull
-                    @Override
-                    public newBill parseSnapshot(@NonNull DataSnapshot snapshot) {
-                        for (DataSnapshot datasnapshot : snapshot.getChildren()
-                        ) {
-
-                            for (DataSnapshot dataSnapshot1 : datasnapshot.getChildren()){
-
-                                amount = dataSnapshot1.child("amount").getValue().toString();
-                                date = dataSnapshot1.child("date").getValue().toString();
-                                place = dataSnapshot1.child("place").getValue().toString();
-                                vendor = dataSnapshot1.child("vendor").getValue().toString();
-                                category = dataSnapshot1.child("category").getValue().toString();
-                            }
-
-                        }
-                        return new newBill(amount,
-                                date,
-                                place,
-                                vendor,
-                                category);
-                    }
-                })
-                .build();
-
-        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<newBill, MyViewHolder>(firebaseRecyclerOptions) {
+        layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
+        adapter = new recyclerviewAdapter(this, list);
+        recyclerView.setAdapter(adapter);
+        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), recyclerView, new RecyclerItemClickListener.ClickListener() {
             @Override
-            protected void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull newBill model) {
-                holder.setTextamount(model.getAmount());
-                holder.setTextdate(model.getDate());
-                holder.setTextplace(model.getPlace());
-                holder.setTextvendor(model.getVendor());
-                holder.setTextcategory(model.getCategory());
+            public void onItemClick(View view, int position) {
+                Toast.makeText(getContext(), "clicked",Toast.LENGTH_SHORT).show();
             }
 
-            @NonNull
             @Override
-            public MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-                View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.dataitems, viewGroup, false);
-                return new MyViewHolder(view);
+            public void onLongItemClick(View view, int position) {
+                Toast.makeText(getContext(), "lamba clicked",Toast.LENGTH_SHORT).show();
             }
-        };
+        }));
 
-        recyclerView.setAdapter(firebaseRecyclerAdapter);
 
         return rootview;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        firebaseRecyclerAdapter.startListening();
-    }
+    private void populate_list(String userId) {
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        firebaseRecyclerAdapter.stopListening();
-    }
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        rootref = database.getReference().child("Bills").child(userId);
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView v_name, date, cost, place, category;
 
-        public MyViewHolder(View view) {
-            super(view);
+        rootref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot data: dataSnapshot.getChildren()){
+                    amount = data.child("amount").getValue().toString();
+                    date = data.child("date").getValue().toString();
+                    place = data.child("place").getValue().toString();
+                    vendor = data.child("vendor").getValue().toString();
+                    category = data.child("category").getValue().toString();
 
-            v_name = view.findViewById(R.id.vendor_name);
-            date = view.findViewById(R.id.date);
-            cost = view.findViewById(R.id.cost);
-            place = view.findViewById(R.id.place);
-            category = view.findViewById(R.id.category);
+                    list.add(new newBill(amount, date, place, vendor, category));
+                    adapter.notifyDataSetChanged();
+                }
+            }
 
-        }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-        public void setTextvendor(String textvendor) {
-            v_name.setText(textvendor);
-        }
+            }
+        });
 
-        public void setTextdate(String textdate) {
-            date.setText(textdate);
-        }
-
-        public void setTextplace(String textplace) {
-            place.setText(textplace);
-        }
-
-        public void setTextamount(String textamount) {
-            cost.setText(textamount);
-        }
-
-        public void setTextcategory(String textcategory) { category.setText(textcategory); }
     }
 }

@@ -108,7 +108,7 @@ public class summary_fragment extends Fragment {
                         amount[index] = amount[index] + price;
                         flag = 0;
                     }
-                    Log.d("array","array-"+category[0]+" "+category[1]+" "+category[2]+" "+category[3]+" "+category[4]+" "+category[5]);
+//                    Log.d("array","array-"+category[0]+" "+category[1]+" "+category[2]+" "+category[3]+" "+category[4]+" "+category[5]);
                 }
 
                 if(amount != null && category != null) {

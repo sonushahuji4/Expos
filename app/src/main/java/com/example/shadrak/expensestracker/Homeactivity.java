@@ -27,6 +27,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class Homeactivity extends AppCompatActivity {
 
     TabLayout tabLayout;
@@ -36,6 +46,8 @@ public class Homeactivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     FirebaseDatabase ref;
+    public static String ipaddress = "192.168.43.43";
+    public static String port = "5000";
 
     public static int TYPE_WIFI = 1;
     public static int TYPE_MOBILE = 2;
@@ -54,6 +66,8 @@ public class Homeactivity extends AppCompatActivity {
         setContentView(R.layout.activity_homeactivity);
 
         relativeLayout = (RelativeLayout) findViewById(R.id.relativelayout);
+
+        connectserver();
 
         Bundle bundle = getIntent().getExtras();
         assert bundle != null;
@@ -88,6 +102,60 @@ public class Homeactivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void connectserver() {
+        String postURL = "http://"+ipaddress+":"+port+"/";
+
+        String postBodyText="Hello";
+        MediaType mediaType = MediaType.parse("text/plain; charset=utf-8");
+        RequestBody postBody = RequestBody.create(mediaType, postBodyText);
+
+        postRequest(postURL, postBody);
+    }
+
+    private void postRequest(String postURL, RequestBody postBody) {
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(postURL)
+                .post(postBody)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // Cancel the post on failure.
+                call.cancel();
+
+                // In order to access the TextView inside the UI thread, the code is executed inside runOnUiThread()
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+//                        TextView responseText = findViewById(R.id.responseText);
+//                        responseText.setText("Failed to Connect to Server");
+                        Log.d("Flask Server","Failed to connect to server");
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                // In order to access the TextView inside the UI thread, the code is executed inside runOnUiThread()
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+//                        TextView responseText = findViewById(R.id.responseText);
+                        try {
+//                            responseText.setText(response.body().string());
+                            Log.d("Flask Server",response.body().string());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
     }
 
     @Override

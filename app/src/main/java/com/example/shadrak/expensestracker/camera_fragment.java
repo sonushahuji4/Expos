@@ -25,6 +25,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
@@ -298,12 +299,13 @@ public class camera_fragment extends Fragment {
                     if(cameraDevice == null)
                         return;
                     cameraCaptureSessions = cameraCaptureSession;
-                    try {
-                        cameraCaptureSessions.stopRepeating();
-                        cameraCaptureSessions.abortCaptures();
-                    } catch (CameraAccessException e) {
-                        e.printStackTrace();
-                    }
+//                    try {
+//                        cameraCaptureSessions.stopRepeating();
+//                        cameraCaptureSessions.abortCaptures();
+//                    } catch (CameraAccessException e) {
+//                        e.printStackTrace();
+//                    }
+                    Log.d("tag","1");
                     updatePreview();
                 }
                 @Override
@@ -323,12 +325,13 @@ public class camera_fragment extends Fragment {
         try{
             cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(),null,mBackgroundHandler);
 
-            try {
-                cameraCaptureSessions.stopRepeating();
-                cameraCaptureSessions.abortCaptures();
-            } catch (CameraAccessException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                cameraCaptureSessions.stopRepeating();
+//                cameraCaptureSessions.abortCaptures();
+//            } catch (CameraAccessException e) {
+//                e.printStackTrace();
+//            }
+            Log.d("tag","2");
         }catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -369,6 +372,7 @@ public class camera_fragment extends Fragment {
     public void onResume() {
         super.onResume();
         startBackgroundThread();
+        Log.d("tag","4");
         if(imageView.isAvailable())
             openCamera();
         else
@@ -383,13 +387,14 @@ public class camera_fragment extends Fragment {
 
     private void stopBackgroundThread() {
         mBackgroundThread.quitSafely();
-        try{
-            mBackgroundThread.join();
-            mBackgroundThread = null;
-            mBackgroundHandler = null;
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
+//        try{
+//            mBackgroundThread.join();
+//            mBackgroundThread = null;
+//            mBackgroundHandler = null;
+//        } catch (InterruptedException e) {
+//          e.printStackTrace();
+//        }
+        Log.d("tag","3");
     }
 
     private void startBackgroundThread() {

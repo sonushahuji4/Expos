@@ -55,6 +55,14 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class formpopup extends Activity {
 
     private static final int RESULT_LOAD_IMAGE = 1;
@@ -64,7 +72,7 @@ public class formpopup extends Activity {
     String vendorname, location, costprice, Category, date, uid, filename;
     Spinner category_spin;
     DatabaseReference rootref, childref;
-    private Uri filePath, selectedImage;
+    private Uri downloadUri, selectedImage;
     TextView file;
     private final int PICK_IMAGE_REQUEST = 71;
 
@@ -254,15 +262,20 @@ public class formpopup extends Activity {
 //            progressDialog.show();
 
             Uri uri = selectedImage;
-            StorageReference ref = storageReference.child(uid).child(String.valueOf(billid)).child(uri.getLastPathSegment());
+            final StorageReference ref = storageReference.child(uid).child(String.valueOf(billid)).child(uri.getLastPathSegment());
             ref.putFile(selectedImage)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                            if(progressDialog != null && progressDialog.isShowing()) {
-//                                progressDialog.dismiss();
-//                            }
-                            Toast.makeText(getApplicationContext(), "Uploaded", Toast.LENGTH_SHORT).show();
+                            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    downloadUri = uri;
+                                    Log.d("uripath", String.valueOf(downloadUri));
+                                    connectserver(String.valueOf(downloadUri));
+                                }
+                            });
+                            Toast.makeText(getApplicationContext(), "Uploaded "+String.valueOf(downloadUri), Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -281,6 +294,60 @@ public class formpopup extends Activity {
                         }
                     });
 //        }
+    }
+
+    private void connectserver(String URL) {
+        String postURL = "http://"+Homeactivity.ipaddress+":"+Homeactivity.port+"/random";
+
+//        String postBodyText="Hello";
+        MediaType mediaType = MediaType.parse("text/plain; charset=utf-8");
+        RequestBody postBody = RequestBody.create(mediaType, URL);
+
+        postRequest(postURL, postBody);
+    }
+
+    private void postRequest(String postURL, RequestBody postBody) {
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(postURL)
+                .post(postBody)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // Cancel the post on failure.
+                call.cancel();
+
+                // In order to access the TextView inside the UI thread, the code is executed inside runOnUiThread()
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+//                        TextView responseText = findViewById(R.id.responseText);
+//                        responseText.setText("Failed to Connect to Server");
+                        Log.d("Flask Server","Failed to connect to server");
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                // In order to access the TextView inside the UI thread, the code is executed inside runOnUiThread()
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+//                        TextView responseText = findViewById(R.id.responseText);
+                        try {
+//                            responseText.setText(response.body().string());
+                            Log.d("Flask Server",response.body().string());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
     }
 
 }

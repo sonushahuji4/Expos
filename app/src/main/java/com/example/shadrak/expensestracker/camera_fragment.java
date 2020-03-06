@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -17,6 +19,7 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -34,36 +37,61 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
-import javax.xml.transform.Result;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 public class camera_fragment extends Fragment {
 
     private Button captureBtn;
-    private TextureView imageView;
-
+    private Button sendButton;
+    private Button deleteButton;
+    TextureView imageView;
+    ImageView imagePreview;
     Image image;
+    byte[] bytes;
+    Uri downloadUri, fileUri, imageuri;
+    ImageReader reader;
+    StorageReference reference;
+    FirebaseAuth firebaseAuth;
+    FirebaseUser firebaseUser;
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference databaseReference;
+    String userID, billID;
 
     //Check orientation of output image
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
@@ -79,8 +107,6 @@ public class camera_fragment extends Fragment {
     private CameraCaptureSession cameraCaptureSessions;
     private CaptureRequest.Builder captureRequestBuilder;
     private Size imageDimension;
-    private ImageReader imageReader;
-
     //Save to File
     private File file;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
@@ -97,6 +123,7 @@ public class camera_fragment extends Fragment {
         @Override
         public void onDisconnected(@NonNull CameraDevice cameraDevice) {
             cameraDevice.close();
+            cameraDevice = null;
         }
 
         @Override
@@ -111,6 +138,34 @@ public class camera_fragment extends Fragment {
         View rootview = inflater.inflate(R.layout.camera_fragment, container, false);
         captureBtn = (Button) rootview.findViewById(R.id.capture);
         imageView = (TextureView) rootview.findViewById(R.id.imageview);
+        sendButton = (Button) rootview.findViewById(R.id.save);
+        deleteButton = (Button) rootview.findViewById(R.id.delete);
+        imagePreview = rootview.findViewById(R.id.imagePreview);
+
+
+        imagePreview.setVisibility(View.GONE);
+        imageView.setVisibility(View.VISIBLE);
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
+        userID = firebaseUser.getUid();
+        Log.d("User","userid"+userID);
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference().child("users").child(userID);
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                billID = dataSnapshot.child("Prev_id").getValue().toString();
+                Log.d("Bill ID:","BillID "+billID);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         assert imageView != null;
         imageView.setSurfaceTextureListener(textureListener);
         captureBtn.setOnClickListener(new View.OnClickListener() {
@@ -119,7 +174,113 @@ public class camera_fragment extends Fragment {
                 takePicture();
             }
         });
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    save(bytes);
+                    sendImage(fileUri);
+                    imagePreview.setVisibility(View.GONE);
+                    imageView.setVisibility(View.VISIBLE);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                imagePreview.setVisibility(View.GONE);
+                imageView.setVisibility(View.VISIBLE);
+            }
+        });
         return rootview;
+    }
+
+    private void sendImage(Uri uri) {
+
+        imageuri = uri;
+        reference = FirebaseStorage.getInstance().getReference();
+        final StorageReference ref = reference.child(userID).child(billID).child(imageuri.getLastPathSegment());
+        ref.putFile(imageuri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        downloadUri = uri;
+                        Log.d("uripath", String.valueOf(downloadUri));
+                        connectserver(String.valueOf(downloadUri));
+                    }
+                });
+            }
+        });
+
+    }
+
+    private void connectserver(String URL) {
+        String postURL = "http://"+Homeactivity.ipaddress+":"+Homeactivity.port+"/random";
+
+//        String postBodyText="Hello";
+        MediaType mediaType = MediaType.parse("text/plain; charset=utf-8");
+        RequestBody postBody = RequestBody.create(mediaType, URL);
+
+        postRequest(postURL, postBody);
+    }
+
+    private void postRequest(String postURL, RequestBody postBody) {
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(postURL)
+                .post(postBody)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // Cancel the post on failure.
+                call.cancel();
+
+                // In order to access the TextView inside the UI thread, the code is executed inside runOnUiThread()
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+//                        TextView responseText = findViewById(R.id.responseText);
+//                        responseText.setText("Failed to Connect to Server");
+                        Log.d("Flask Server","Failed to connect to server");
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                // In order to access the TextView inside the UI thread, the code is executed inside runOnUiThread()
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+//                        TextView responseText = findViewById(R.id.responseText);
+                        try {
+//                            responseText.setText(response.body().string());
+                            Log.d("Flask Server",response.body().string());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    private void save(byte[] bytes) throws IOException {
+        OutputStream outputStream = null;
+        try{
+            outputStream = new FileOutputStream(file);
+            outputStream.write(bytes);
+        }finally {
+            if(outputStream!=null)
+                outputStream.close();
+        }
     }
 
     private void openCamera() {
@@ -148,6 +309,9 @@ public class camera_fragment extends Fragment {
         if(cameraDevice == null)
             return;
         CameraManager manager = (CameraManager)getActivity().getSystemService(Context.CAMERA_SERVICE);
+
+        imagePreview.setVisibility(View.GONE);
+        imageView.setVisibility(View.VISIBLE);
         try{
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraDevice.getId());
             Size[] jpegSizes = null;
@@ -161,7 +325,7 @@ public class camera_fragment extends Fragment {
                 width = jpegSizes[0].getWidth();
                 height = jpegSizes[0].getHeight();
             }
-            final ImageReader reader = ImageReader.newInstance(width,height,ImageFormat.JPEG,1);
+            reader = ImageReader.newInstance(width,height,ImageFormat.JPEG,1);
             List<Surface> outputSurface = new ArrayList<>(2);
             outputSurface.add(reader.getSurface());
             outputSurface.add(new Surface(imageView.getSurfaceTexture()));
@@ -186,66 +350,30 @@ public class camera_fragment extends Fragment {
                     try{
                         image = reader.acquireLatestImage();
                         ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-                        byte[] bytes = new byte[buffer.capacity()];
+                        bytes = new byte[buffer.capacity()];
                         buffer.get(bytes);
-                        save(bytes);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                        //save(bytes);
+
+                        final Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                imageView.setVisibility(View.GONE);
+                                imagePreview.setVisibility(View.VISIBLE);
+                                imagePreview.setImageBitmap(bitmap);
+                                fileUri = Uri.fromFile(file);
+                                Log.d("URI", String.valueOf(fileUri));
+                            }
+                        });
+
+
                     } finally {
                         if(image != null)
                             image.close();
                     }
                 }
-                private void save(byte[] bytes) throws IOException {
-                    OutputStream outputStream = null;
-                    try{
-                        outputStream = new FileOutputStream(file);
-                        outputStream.write(bytes);
-                    }finally {
-                        if(outputStream!=null)
-                            outputStream.close();
-                    }
-                }
+
             };
-
-            //retrofit2
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(API.Base_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-
-            API apiInterface = retrofit.create(API.class);
-
-            try{
-
-                RequestData req = new RequestData();
-                req.setImage(image);
-
-                Call<ResultData> resultDataCall =  apiInterface.getresult(req);
-                resultDataCall.enqueue(new Callback<ResultData>() {
-                    @Override
-                    public void onResponse(Call<ResultData> call, Response<ResultData> response) {
-
-                        ResultData res = response.body();
-
-                        if(res == null)
-                            return;
-
-                        Toast.makeText(getActivity(), "Response is "+res.toString(),Toast.LENGTH_SHORT).show();
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResultData> call, Throwable t) {
-
-                    }
-                });
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
 
             reader.setOnImageAvailableListener(readerListener,mBackgroundHandler);
             final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {

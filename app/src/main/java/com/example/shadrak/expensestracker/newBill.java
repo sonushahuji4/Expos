@@ -1,5 +1,7 @@
 package com.example.shadrak.expensestracker;
 
+import static com.google.android.gms.common.internal.safeparcel.SafeParcelable.NULL;
+
 public class newBill {
 
     private String Amount;
@@ -7,13 +9,19 @@ public class newBill {
     private String Place;
     private String Category;
     private String Vendor;
+    private String Status = "Not Verified";
+    private String Link = NULL;
+    private String Items = NULL;
 
-    public newBill(String amount, String date, String place, String vendor, String category) {
+    public newBill(String amount, String date, String place, String vendor, String category, String status, String link, String items) {
         this.Amount = amount;
         this.Date = date;
         this.Place = place;
         this.Vendor = vendor;
         this.Category = category;
+        this.Status = status;
+        this.Link = link;
+        this.Items = items;
     }
 
     //Getter
@@ -35,6 +43,12 @@ public class newBill {
     }
 
     public String getCategory() { return Category; }
+
+    public String getStatus() { return Status; }
+
+    public String getLink() { return Link; }
+
+    public String getItems() { return Items; }
 
     //Setter
 

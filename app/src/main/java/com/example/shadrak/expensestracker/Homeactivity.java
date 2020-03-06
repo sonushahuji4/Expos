@@ -91,16 +91,16 @@ public class Homeactivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        fab = findViewById(R.id.fab);
-
-        fab.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), formpopup.class);
-                i.putExtra("uid",uid);
-                startActivity(i);
-            }
-        });
+//        fab = findViewById(R.id.fab);
+//
+//        fab.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View v) {
+//                Intent i = new Intent(getApplicationContext(), formpopup.class);
+//                i.putExtra("uid",uid);
+//                startActivity(i);
+//            }
+//        });
 
     }
 

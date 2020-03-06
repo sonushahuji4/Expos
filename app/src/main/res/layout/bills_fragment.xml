@@ -6,6 +6,7 @@
     android:orientation="vertical"
     android:fillViewport="true"
     android:background="#3badfc"
+    android:id="@+id/bills_fragment"
     tools:context=".bills_fragment">
 
     <android.support.v7.widget.RecyclerView

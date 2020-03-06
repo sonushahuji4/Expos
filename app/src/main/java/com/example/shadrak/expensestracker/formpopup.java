@@ -29,6 +29,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -79,15 +81,21 @@ public class formpopup extends Activity {
     //Firebase
     FirebaseStorage storage;
     StorageReference storageReference;
+    FirebaseAuth firebaseAuth;
+    FirebaseUser firebaseUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_formpopup);
 
-        Bundle bundle = getIntent().getExtras();
-        assert bundle != null;
-        uid = bundle.getString("uid");
+//        Bundle bundle = getIntent().getExtras();
+//        assert bundle != null;
+//        uid = bundle.getString("uid");
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
+        uid = firebaseUser.getUid();
 
         //firebase stuff
         rootref = FirebaseDatabase.getInstance().getReference();
@@ -150,16 +158,16 @@ public class formpopup extends Activity {
         edit_date = findViewById(R.id.editdate);
         amount = findViewById(R.id.amount);
         submit = findViewById(R.id.submitbutton);
-        upload = findViewById(R.id.uploadbtn);
-        file = findViewById(R.id.imageid);
+//        upload = findViewById(R.id.uploadbtn);
+//        file = findViewById(R.id.imageid);
 
-        upload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                chooseImage();
-                //uploadImage();
-            }
-        });
+//        upload.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                chooseImage();
+//                //uploadImage();
+//            }
+//        });
 
 
         // Pick date function
@@ -203,98 +211,84 @@ public class formpopup extends Activity {
                 Random r = new Random();
                 int billid = r.nextInt(9999 - 1000) + 1000;
 
-                //childref = rootref.child("Bills").child(userid).child(String.valueOf(billid));
-                //childref = rootref.child("Bills").child(userid);
                 childref = rootref.child("Bills");
 
-                childref.child(uid).child(String.valueOf(billid)).setValue(new newBill(costprice, date, location, vendorname, Category));
+                childref.child(uid).child(String.valueOf(billid)).setValue(new newBill(costprice, date, location, vendorname, Category, "not verified", "NULL", "NULL"));
                 Toast.makeText(getApplicationContext(),"Submitted",Toast.LENGTH_SHORT).show();
-                uploadImage(billid);
+//                uploadImage(billid);
                 finish();
             }
         });
 
     }
 
-    private void chooseImage() {
-        Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//        i.setType(Environment.getExternalStorageDirectory()+"/*");
-//        i.setAction(Intent.ACTION_GET_CONTENT);
-//        startActivityForResult(Intent.createChooser(i, "Select pic"), PICK_IMAGE_REQUEST);
-        startActivityForResult(i, RESULT_LOAD_IMAGE);
-    }
+//    private void chooseImage() {
+//        Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//
+//        startActivityForResult(i, RESULT_LOAD_IMAGE);
+//    }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK
-                && data != null && data.getData() != null )
-        {
-//            filePath = data.getData();
-//            try {
-//                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
-////                imageView.setImageBitmap(bitmap)
-//                file.setText((CharSequence) filePath);
-//            }
-//            catch (IOException e)
-//            {
-//                e.printStackTrace();
-//            }
-            selectedImage = data.getData();
-            String[] filePathColumn = { MediaStore.Images.Media.DATA };
-
-            Cursor cursor = getContentResolver().query(selectedImage,
-                    filePathColumn, null, null, null);
-            cursor.moveToFirst();
-
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String storagePath = cursor.getString(columnIndex);
-            file.setText(storagePath);
-            cursor.close();
-        }
-    }
-
-    private void uploadImage(int billid) {
-//        if(filePath != null)
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if(requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK
+//                && data != null && data.getData() != null )
 //        {
-//            final ProgressDialog progressDialog = new ProgressDialog(this);
-//            progressDialog.setTitle("Uploading...");
-//            progressDialog.show();
-
-            Uri uri = selectedImage;
-            final StorageReference ref = storageReference.child(uid).child(String.valueOf(billid)).child(uri.getLastPathSegment());
-            ref.putFile(selectedImage)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    downloadUri = uri;
-                                    Log.d("uripath", String.valueOf(downloadUri));
-                                    connectserver(String.valueOf(downloadUri));
-                                }
-                            });
-                            Toast.makeText(getApplicationContext(), "Uploaded "+String.valueOf(downloadUri), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-//                            progressDialog.dismiss();
-                            Toast.makeText(getApplicationContext(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
-                                    .getTotalByteCount());
-//                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
-                        }
-                    });
+//            selectedImage = data.getData();
+//            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+//
+//            Cursor cursor = getContentResolver().query(selectedImage,
+//                    filePathColumn, null, null, null);
+//            cursor.moveToFirst();
+//
+//            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+//            String storagePath = cursor.getString(columnIndex);
+//            file.setText(storagePath);
+//            cursor.close();
 //        }
-    }
+//    }
+
+//    private void uploadImage(int billid) {
+////        if(filePath != null)
+////        {
+////            final ProgressDialog progressDialog = new ProgressDialog(this);
+////            progressDialog.setTitle("Uploading...");
+////            progressDialog.show();
+//
+//            Uri uri = selectedImage;
+//            final StorageReference ref = storageReference.child(uid).child(String.valueOf(billid)).child(uri.getLastPathSegment());
+//            ref.putFile(selectedImage)
+//                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                        @Override
+//                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                                @Override
+//                                public void onSuccess(Uri uri) {
+//                                    downloadUri = uri;
+//                                    Log.d("uripath", String.valueOf(downloadUri));
+//                                    connectserver(String.valueOf(downloadUri));
+//                                }
+//                            });
+//                            Toast.makeText(getApplicationContext(), "Uploaded "+String.valueOf(downloadUri), Toast.LENGTH_SHORT).show();
+//                        }
+//                    })
+//                    .addOnFailureListener(new OnFailureListener() {
+//                        @Override
+//                        public void onFailure(@NonNull Exception e) {
+////                            progressDialog.dismiss();
+//                            Toast.makeText(getApplicationContext(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+//                        }
+//                    })
+//                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+//                        @Override
+//                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+//                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+//                                    .getTotalByteCount());
+////                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
+//                        }
+//                    });
+////        }
+//    }
 
     private void connectserver(String URL) {
         String postURL = "http://"+Homeactivity.ipaddress+":"+Homeactivity.port+"/random";

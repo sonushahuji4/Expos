@@ -79,13 +79,12 @@ public class Registeractivity extends AppCompatActivity {
                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
                                 String uid = user.getUid();
+                                int prev_id = 0000;
                                 if(uid == null)
                                     Toast.makeText(getApplicationContext(), "Some Error occured!!",Toast.LENGTH_SHORT).show();
                                 else {
-                                    User usr = new User(uid, fname, email);
+                                    User usr = new User(uid, fname, email, prev_id);
                                     mDatabase.child("users").child(uid).setValue(usr);
-
-
                                     i.putExtra("uid", uid); // Passing data between activities
                                     startActivity(i);
                                     finish();

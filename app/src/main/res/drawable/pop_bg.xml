@@ -5,6 +5,11 @@
     <gradient
         android:startColor="@color/lightblue"
         android:endColor="@color/darkblue"
-        android:angle="315"/>
+        android:angle="270"/>
+    <padding
+        android:left="7dp"
+        android:right="7dp"
+        android:top="7dp"
+        android:bottom="7dp" />
 
 </shape>
